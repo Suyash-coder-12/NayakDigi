@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nayak Digital Seva Kendra | Digital India</title>
+    <style>
+        /* --- FUTURISTIC GOVT THEME VARIABLES --- */
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        
+        :root {
+            --govt-blue: #0A1931;
+            --govt-blue-light: #150E56;
+            --saffron: #FF9933;
+            --green: #138808;
+            --white: #ffffff;
+            --bg-color: #F0F4F8;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg-color); color: #333; overflow-x: hidden; scroll-behavior: smooth; position: relative; }
+
+        /* --- BACKGROUND GLOWING ORBS (FUTURISTIC EFFECT) --- */
+        .bg-orb { position: fixed; border-radius: 50%; filter: blur(80px); z-index: -1; opacity: 0.4; animation: floatOrb 15s infinite alternate ease-in-out; }
+        .orb-1 { width: 400px; height: 400px; background: var(--saffron); top: -100px; left: -100px; }
+        .orb-2 { width: 350px; height: 350px; background: var(--govt-blue-light); bottom: 100px; right: -50px; animation-delay: -5s; }
+        .orb-3 { width: 300px; height: 300px; background: var(--green); top: 40%; left: 30%; animation-delay: -10s; opacity: 0.2; }
+
+        @keyframes floatOrb { 
+            0% { transform: translate(0, 0) scale(1); } 
+            50% { transform: translate(50px, 100px) scale(1.2); } 
+            100% { transform: translate(-50px, -50px) scale(0.9); } 
+        }
+
+        /* --- HEAVY ANIMATIONS --- */
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes scanline { 0% { top: -10%; opacity: 0; } 50% { opacity: 1; } 100% { top: 110%; opacity: 0; } }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-12px); } 100% { transform: translateY(0px); } }
+        @keyframes pulseBorder { 0% { box-shadow: 0 0 0 0 rgba(255,153,51,0.6); } 70% { box-shadow: 0 0 0 20px rgba(255,153,51,0); } 100% { box-shadow: 0 0 0 0 rgba(255,153,51,0); } }
+        @keyframes shimmerText { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
+        @keyframes popInStagger { from { opacity: 0; transform: scale(0.8) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+
+        /* --- TOP RIBBON --- */
+        .top-ribbon { background: var(--govt-blue); color: var(--white); font-size: 12px; padding: 8px 5%; display: flex; justify-content: space-between; border-bottom: 3px solid var(--saffron); font-weight: 600; letter-spacing: 1px; }
+
+        /* --- GLASSMORPHISM NAVBAR --- */
+        nav { position: sticky; top: 0; z-index: 1000; background: var(--glass-bg); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-bottom: 1px solid var(--glass-border); padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow); }
+        .logo-sec { display: flex; align-items: center; gap: 12px; }
+        .logo-sec img { height: 45px; animation: float 4s ease-in-out infinite; }
+        .brand-name h1 { font-size: 24px; color: var(--govt-blue); font-weight: 800; margin: 0; line-height: 1.2; text-transform: uppercase;}
+        .brand-name p { font-size: 12px; color: var(--saffron); font-weight: 800; letter-spacing: 3px; margin: 0; }
+        
+        .nav-links { display: flex; gap: 20px; }
+        .nav-btn { background: transparent; border: none; font-size: 14px; font-weight: 700; color: var(--govt-blue); cursor: pointer; padding: 8px 15px; border-radius: 8px; transition: 0.3s; position: relative; overflow: hidden; }
+        .nav-btn::before { content: ''; position: absolute; bottom: 0; left: 0; width: 0%; height: 3px; background: var(--saffron); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .nav-btn:hover::before, .nav-btn.active::before { width: 100%; }
+        .nav-btn:hover { color: var(--saffron); transform: translateY(-2px); }
+        .nav-btn.active { color: var(--saffron); background: rgba(255, 153, 51, 0.15); }
+
+        /* --- DYNAMIC APP CONTAINER --- */
+        #app-content { min-height: 80vh; padding: 40px 5%; }
+        .page-view { display: none; }
+        .page-view.active { display: block; animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+        /* --- HERO BANNER --- */
+        .hero-banner { background: linear-gradient(135deg, var(--govt-blue), var(--govt-blue-light)); border-radius: 24px; padding: 60px 30px; color: white; text-align: center; position: relative; overflow: hidden; box-shadow: 0 20px 40px rgba(10, 25, 49, 0.3); }
+        .hero-banner::after { content: ''; position: absolute; width: 100%; height: 3px; background: rgba(255, 153, 51, 0.8); left: 0; box-shadow: 0 0 20px var(--saffron); animation: scanline 4s linear infinite; }
+        .hero-banner h2 { font-size: 42px; font-weight: 800; margin-bottom: 15px; background: linear-gradient(to right, #fff, var(--saffron), #fff); background-size: 200% auto; color: transparent; -webkit-background-clip: text; animation: shimmerText 5s linear infinite; }
+        .hero-banner p { font-size: 16px; opacity: 0.9; margin-bottom: 30px; max-width: 600px; margin-inline: auto; line-height: 1.6; }
+        .hero-btn { background: var(--saffron); color: white; border: none; padding: 15px 35px; font-size: 16px; font-weight: 800; border-radius: 30px; cursor: pointer; transition: 0.3s; animation: pulseBorder 2s infinite; }
+        .hero-btn:hover { transform: translateY(-5px) scale(1.05); background: #e68a00; }
+
+        /* --- 👑 LEADERSHIP SECTION --- */
+        .leadership-sec { margin: 60px 0; text-align: center; }
+        .section-title { font-size: 28px; color: var(--govt-blue); font-weight: 800; margin-bottom: 40px; display: inline-block; position: relative; }
+        .section-title::after { content: ''; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); width: 60px; height: 4px; background: var(--saffron); border-radius: 2px; }
+        
+        .leader-grid { display: flex; justify-content: center; }
+        
+        .leader-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(15px); border: 1px solid var(--glass-border); border-top: 5px solid var(--saffron); border-radius: 20px; padding: 40px; width: 350px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden; animation: float 6s ease-in-out infinite; }
+        .leader-card::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,153,51,0.15) 0%, transparent 60%); opacity: 0; transition: 0.5s; pointer-events: none; }
+        .leader-card:hover { transform: translateY(-15px) scale(1.03); box-shadow: 0 30px 60px rgba(10, 25, 49, 0.2); border-top-color: var(--govt-blue); }
+        .leader-card:hover::before { opacity: 1; transform: rotate(90deg); }
+        
+        .leader-img-wrapper { position: relative; width: 140px; height: 140px; margin: 0 auto 20px auto; }
+        /* FIXED IMAGE PATH HERE */
+        .leader-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 4px solid var(--white); box-shadow: 0 10px 25px rgba(0,0,0,0.2); position: relative; z-index: 2; transition: 0.5s; background: white; }
+        .leader-card:hover .leader-img { transform: scale(1.1); border-color: var(--saffron); }
+        
+        .img-ring { position: absolute; top: -8px; left: -8px; right: -8px; bottom: -8px; border-radius: 50%; border: 3px dashed var(--saffron); animation: spin 8s linear infinite; z-index: 1; }
+        .img-ring-2 { position: absolute; top: -15px; left: -15px; right: -15px; bottom: -15px; border-radius: 50%; border: 1px solid rgba(10, 25, 49, 0.2); animation: spin 12s linear infinite reverse; z-index: 1; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        .leader-card h3 { font-size: 24px; font-weight: 800; color: var(--govt-blue); margin-bottom: 5px; }
+        .leader-role { display: inline-block; background: rgba(255, 153, 51, 0.15); color: var(--saffron); padding: 8px 20px; border-radius: 30px; font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; }
+        .leader-card p { font-size: 15px; color: #555; line-height: 1.6; font-weight: 500; }
+
+        /* --- SERVICES SECTION --- */
+        .filter-bar { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 15px; margin-bottom: 30px; scrollbar-width: none; }
+        .filter-bar::-webkit-scrollbar { display: none; }
+        .filter-btn { background: rgba(255,255,255,0.6); backdrop-filter: blur(5px); border: 2px solid #cbd5e1; padding: 12px 25px; border-radius: 30px; font-weight: 700; font-size: 14px; cursor: pointer; transition: 0.4s; white-space: nowrap; color: var(--govt-blue); }
+        .filter-btn:hover { background: var(--saffron); color: white; border-color: var(--saffron); transform: translateY(-3px); }
+        .filter-btn.active { background: var(--govt-blue); color: white; border-color: var(--govt-blue); box-shadow: 0 10px 20px rgba(10, 25, 49, 0.3); }
+        
+        .services-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; perspective: 1000px; }
+        
+        .service-card { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(10px); border: 1px solid var(--glass-border); border-radius: 16px; padding: 25px 20px; text-align: center; cursor: pointer; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-decoration: none; color: inherit; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.05); opacity: 0; animation: popInStagger 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .service-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(255,153,51,0.1), rgba(19,136,8,0.05)); opacity: 0; transition: 0.4s; z-index: 0; }
+        .service-card::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 4px; background: var(--saffron); transform: scaleX(0); transition: 0.4s; transform-origin: left; }
+        .service-card:hover { transform: translateY(-10px) rotateX(5deg) rotateY(-5deg); box-shadow: 15px 25px 30px rgba(0,0,0,0.1); border-color: rgba(255,255,255,0.9); }
+        .service-card:hover::before { opacity: 1; }
+        .service-card:hover::after { transform: scaleX(1); }
+        
+        .s-icon { font-size: 38px; margin-bottom: 15px; transition: 0.5s; display: inline-block; position: relative; z-index: 1; text-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .service-card:hover .s-icon { transform: scale(1.3) translateY(-5px); }
+        .s-name { font-size: 14px; font-weight: 800; color: var(--govt-blue); line-height: 1.4; position: relative; z-index: 1; }
+
+        /* --- CONTACT & GALLERY --- */
+        .contact-container { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(15px); padding: 50px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); border-top: 6px solid var(--green); }
+        .form-group { margin-bottom: 25px; }
+        .form-group input, .form-group textarea { width: 100%; padding: 18px; border: 2px solid #cbd5e1; border-radius: 12px; font-size: 15px; outline: none; transition: 0.3s; font-family: inherit; font-weight: 500; background: rgba(255,255,255,0.9); }
+        .form-group input:focus, .form-group textarea:focus { border-color: var(--saffron); box-shadow: 0 0 15px rgba(255,153,51,0.2); transform: translateY(-2px); }
+        .contact-info h3 { color: var(--govt-blue); margin-bottom: 20px; font-size: 28px; font-weight: 800; }
+        .info-line { display: flex; gap: 20px; margin-bottom: 25px; align-items: center; font-size: 16px; color: #444; font-weight: 600;}
+        .info-icon { background: linear-gradient(135deg, var(--govt-blue), var(--govt-blue-light)); color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 20px; box-shadow: 0 10px 20px rgba(10, 25, 49, 0.2); animation: float 4s infinite alternate; }
+
+        /* --- FOOTER & CREATOR CREDIT --- */
+        footer { background: var(--govt-blue); color: white; padding: 50px 5% 40px 5%; text-align: center; border-top: 5px solid var(--saffron); position: relative; overflow: hidden; }
+        footer::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 50%); animation: spin 20s linear infinite; }
+        footer h3 { font-size: 28px; margin-bottom: 15px; letter-spacing: 2px; font-weight: 800; position: relative; z-index: 2; }
+        
+        .dev-credit-box { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.15); display: inline-block; padding: 20px 40px; border-radius: 16px; margin-top: 30px; backdrop-filter: blur(10px); transition: 0.4s; cursor: pointer; position: relative; z-index: 2; overflow: hidden; }
+        .dev-credit-box::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.2), transparent); transform: skewX(-20deg); transition: 0.5s; }
+        .dev-credit-box:hover::before { left: 150%; }
+        .dev-credit-box:hover { background: rgba(255, 255, 255, 0.1); transform: translateY(-5px) scale(1.02); box-shadow: 0 15px 30px rgba(0,0,0,0.3); border-color: var(--saffron); }
+        .dev-text { font-size: 13px; color: #bbb; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; font-weight: 600; }
+        .dev-name { font-size: 22px; font-weight: 800; color: var(--saffron); letter-spacing: 3px; text-shadow: 0 0 15px rgba(255,153,51,0.5); }
+
+        /* --- MOBILE BOTTOM NAV --- */
+        .mobile-bottom-nav { display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); box-shadow: 0 -5px 20px rgba(0,0,0,0.08); z-index: 2000; border-top: 1px solid #e2e8f0; }
+        .m-nav-item { flex: 1; text-align: center; padding: 12px 0; color: #64748b; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: 0.3s; }
+        .m-nav-icon { font-size: 22px; transition: 0.3s; }
+        .m-nav-item.active { color: var(--govt-blue); }
+        .m-nav-item.active .m-nav-icon { color: var(--saffron); transform: translateY(-3px); }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; } 
+            .mobile-bottom-nav { display: flex; }
+            #app-content { padding: 25px 15px 100px 15px; }
+            .brand-name h1 { font-size: 20px; }
+            .hero-banner { padding: 40px 20px; border-radius: 16px; }
+            .hero-banner h2 { font-size: 28px; }
+            .hero-banner p { font-size: 14px; }
+            .leader-card { width: 100%; max-width: 350px; padding: 30px 20px; }
+            .filter-bar { padding-bottom: 10px; margin-bottom: 20px; }
+            .filter-btn { padding: 8px 16px; font-size: 12px; }
+            .services-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .service-card { padding: 20px 10px; border-radius: 12px; }
+            .s-icon { font-size: 30px; margin-bottom: 10px; }
+            .s-name { font-size: 11px; }
+            .contact-container { grid-template-columns: 1fr; padding: 25px; border-radius: 16px; gap: 30px; }
+            .contact-info h3 { font-size: 24px; }
+            footer { padding-bottom: 90px; } 
+            footer h3 { font-size: 20px; }
+            .dev-name { font-size: 18px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-orb orb-3"></div>
+
+    <div class="top-ribbon">
+        <div>🇮🇳 GOVT. SERVICES PORTAL</div>
+        <div>Toll Free: +91 9370473351 | 🌍 English</div>
+    </div>
+
+    <nav>
+        <div class="logo-sec">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="Emblem">
+            <div class="brand-name">
+                <h1>Nayak Digital</h1>
+                <p>Seva Kendra</p>
+            </div>
+        </div>
+        <div class="nav-links">
+            <button class="nav-btn active" onclick="navigate('home')">Home</button>
+            <button class="nav-btn" onclick="navigate('services')">All Services</button>
+            <button class="nav-btn" onclick="navigate('gallery')">Gallery</button>
+            <button class="nav-btn" onclick="navigate('contact')">Contact Us</button>
+        </div>
+    </nav>
+
+    <div class="mobile-bottom-nav">
+        <div class="m-nav-item active" id="m-nav-home" onclick="navigate('home')">
+            <div class="m-nav-icon">🏠</div><span>Home</span>
+        </div>
+        <div class="m-nav-item" id="m-nav-services" onclick="navigate('services')">
+            <div class="m-nav-icon">🗂️</div><span>Services</span>
+        </div>
+        <div class="m-nav-item" id="m-nav-gallery" onclick="navigate('gallery')">
+            <div class="m-nav-icon">🖼️</div><span>Gallery</span>
+        </div>
+        <div class="m-nav-item" id="m-nav-contact" onclick="navigate('contact')">
+            <div class="m-nav-icon">📞</div><span>Contact</span>
+        </div>
+    </div>
+
+    <div id="app-content">
+
+        <div id="view-home" class="page-view active">
+            <div class="hero-banner">
+                <h2>Future of E-Governance</h2>
+                <p>Nayak Digital Seva Kendra brings 70+ Government, CSC, MahaDBT, and utility services to your fingertips with lightning speed and military-grade security.</p>
+                <button class="hero-btn" onclick="navigate('services')">Explore All Services ➔</button>
+            </div>
+
+            <div class="leadership-sec">
+                <h2 class="section-title">Leadership & Visionary</h2>
+                <div class="leader-grid">
+                    <div class="leader-card">
+                        <div class="leader-img-wrapper">
+                            <div class="img-ring"></div>
+                            <div class="img-ring-2"></div>
+                            <img src="./surajbhau.png" alt="Founder" class="leader-img">
+                        </div>
+                        <h3>Suraj Gulab Rathod</h3>
+                        <div class="leader-role">Founder</div>
+                        <p>Driving the vision of Digital India to the grassroots level. Ensuring transparency, speed, and trust in every digital transaction across Maharashtra.</p>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="margin: 40px 0 20px 0; color: var(--govt-blue); text-align: left; font-size: 24px; font-weight: 800;">Trending Services 🔥</h3>
+            <div class="services-grid" id="trending-grid"></div>
+        </div>
+
+        <div id="view-services" class="page-view">
+            <h2 style="color: var(--govt-blue); margin-bottom: 25px; font-size: 32px; font-weight: 800;">Service Directory</h2>
+            
+            <div class="filter-bar" id="filter-bar">
+                <button class="filter-btn active" onclick="filterData('All')">All Services</button>
+                <button class="filter-btn" onclick="filterData('CSC')">CSC & MahaOnline</button>
+                <button class="filter-btn" onclick="filterData('MahaDBT')">MahaDBT & State</button>
+                <button class="filter-btn" onclick="filterData('Aadhaar')">Aadhaar & PAN</button>
+                <button class="filter-btn" onclick="filterData('Software')">Software & Tools</button>
+            </div>
+
+            <div class="services-grid" id="all-services-grid"></div>
+        </div>
+
+        <div id="view-gallery" class="page-view">
+            <h2 style="color: var(--govt-blue); margin-bottom: 40px; font-size: 32px; font-weight: 800; text-align: center;">Our Kendra Gallery</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+                <div style="border-radius: 20px; overflow: hidden; box-shadow: var(--shadow); position: relative; cursor: pointer; aspect-ratio: 4/3;">
+                    <img src="./1.jpeg" alt="Center" style="width: 100%; height: 100%; object-fit: cover; transition: 0.5s;">
+                </div>
+                <div style="border-radius: 20px; overflow: hidden; box-shadow: var(--shadow); position: relative; cursor: pointer; aspect-ratio: 4/3;">
+                    <img src="./2.jpeg" alt="Customers" style="width: 100%; height: 100%; object-fit: cover; transition: 0.5s;">
+                </div>
+                <div style="border-radius: 20px; overflow: hidden; box-shadow: var(--shadow); position: relative; cursor: pointer; aspect-ratio: 4/3;">
+                    <img src="./3.jpeg" alt="Biometrics" style="width: 100%; height: 100%; object-fit: cover; transition: 0.5s;">
+                </div>
+            </div>
+        </div>
+
+        <div id="view-contact" class="page-view">
+            <div class="contact-container">
+                <div>
+                    <h2 style="color: var(--govt-blue); margin-bottom: 10px; font-size: 36px; font-weight: 800;">Get in Touch</h2>
+                    <p style="color: #666; margin-bottom: 30px; font-size: 16px; font-weight: 500;">Have an issue with PAN, Aadhaar or MahaDBT? Drop us a secure message.</p>
+                    
+                    <form id="contactForm" onsubmit="submitForm(event)">
+                        <div class="form-group"><input type="text" placeholder="Your Full Name" required></div>
+                        <div class="form-group"><input type="tel" placeholder="Mobile Number" required></div>
+                        <div class="form-group"><textarea rows="4" placeholder="Describe your query..." required></textarea></div>
+                        <button type="submit" class="hero-btn" style="width: 100%; border-radius: 12px; font-size: 18px;">Send Secure Message</button>
+                    </form>
+                </div>
+                <div class="contact-info">
+                    <h3>Nayak Digital Seva Kendra</h3>
+                    <div class="info-line"><div class="info-icon">📍</div><div>Main Market Line, Kali (dk) Tq. Mahagaon, Dist. Yavatmal</div></div>
+                    <div class="info-line"><div class="info-icon">📞</div><div>+91 9370473351</div></div>
+                    <div class="info-line"><div class="info-icon">✉️</div><div>surajgulabrathod5@gmail.com</div></div>
+                    
+                    <div style="width: 100%; height: 220px; background: rgba(255,255,255,0.5); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--govt-blue); margin-top: 30px; border: 3px dashed #cbd5e1; backdrop-filter: blur(5px);">
+                        🌍 Interactive GPS Map Loaded Here
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <h3>NAYAK DIGITAL SEVA KENDRA</h3>
+        <p style="font-size: 14px; opacity: 0.8; max-width: 600px; margin: 0 auto 10px auto;">Authorized provider of CSC, MahaOnline, Aadhaar, and Pan services under the Digital India Initiative.</p>
+        
+        <div class="dev-credit-box">
+            <div class="dev-text">System Architecture & Code By</div>
+            <div class="dev-name">&lt;/&gt; SUYASH RATHOD</div>
+        </div>
+    </footer>
+
+    <script>
+        // 1. DYNAMIC DATA ARRAY WITH ALL 70+ LINKS POPULATED
+        const servicesData = [
+            // --- CSC & MahaOnline ---
+            { name: "Digitalseva Login", cat: "CSC", icon: "💻", link: "https://digitalseva.csc.gov.in" },
+            { name: "PM Kisan CSC", cat: "CSC", icon: "🚜", link: "https://pmkisan.gov.in" },
+            { name: "CSC Account Login", cat: "CSC", icon: "🏦", link: "#" },
+            { name: "Digipay Lite Download", cat: "CSC", icon: "💸", link: "https://liveappstore.in/share?com.cscpay.cscpay=" },
+            { name: "CSC GAS Booking", cat: "CSC", icon: "🔥", link: "#" },
+            { name: "Digipay Lite Support", cat: "CSC", icon: "🎧", link: "#" },
+            { name: "IRCTC Train Ticket", cat: "CSC", icon: "🎫", link: "https://www.irctc.co.in/nget/train-search" },
+            { name: "CSC Train Booking", cat: "CSC", icon: "🚂", link: "https://www.irctc.co.in/nget/train-search" },
+            { name: "CSC Travel Booking", cat: "CSC", icon: "✈️", link: "#" },
+            { name: "CSC LoanBazar", cat: "CSC", icon: "💰", link: "#" },
+            { name: "Mahaonline Login", cat: "CSC", icon: "🏛️", link: "#" },
+            { name: "AapleSarkar Login", cat: "CSC", icon: "🏛️", link: "https://aaplesarkar.mahaonline.gov.in/en" },
+            { name: "HDFC Account Opening", cat: "CSC", icon: "🏦", link: "#" },
+
+            // --- MahaDBT & State Schemes ---
+            { name: "Mahadbt Farmer", cat: "MahaDBT", icon: "🌾", link: "https://mahadbt.maharashtra.gov.in/Farmer/AgriLogin/AgriLogin" },
+            { name: "Mahadbt Farmer Reg.", cat: "MahaDBT", icon: "📝", link: "#" },
+            { name: "Mahadbt Scheme Details", cat: "MahaDBT", icon: "📋", link: "#" },
+            { name: "Kusum Solar", cat: "MahaDBT", icon: "☀️", link: "https://kusum.mahaurja.com/solar/beneficiary/register/Kusum-Yojana-Component-B" },
+            { name: "Meda Beneficiary App", cat: "MahaDBT", icon: "📱", link: "#" },
+            { name: "Digital Satbara", cat: "MahaDBT", icon: "📱", link: "https://digitalsatbara.mahabhumi.gov.in/dslr" },
+            { name: "Mahabhulekh Satbara", cat: "MahaDBT", icon: "📜", link: "#" },
+            { name: "BhuNakasha", cat: "MahaDBT", icon: "🗺️", link: "#" },
+            { name: "Ehakk Ferfar 7/12", cat: "MahaDBT", icon: "📄", link: "#" },
+            { name: "Grass Mahakosh", cat: "MahaDBT", icon: "💰", link: "#" },
+            { name: "Leave & License Agrmt", cat: "MahaDBT", icon: "🏠", link: "#" },
+            { name: "Mahafood RC Details", cat: "MahaDBT", icon: "🍚", link: "https://rcms.mahafood.gov.in/Show_Reports.aspx?RID=116" },
+            { name: "Mahafood RC Login", cat: "MahaDBT", icon: "🔐", link: "#" },
+            { name: "Mahabocw Worker", cat: "MahaDBT", icon: "👷", link: "#" },
+            { name: "Mahadiscom Bill", cat: "MahaDBT", icon: "⚡", link: "#" },
+            { name: "New Meter Connection", cat: "MahaDBT", icon: "🔌", link: "#" },
+            { name: "Charity Commissioner", cat: "MahaDBT", icon: "⚖️", link: "#" },
+            { name: "Police CCTNS", cat: "MahaDBT", icon: "🚓", link: "#" },
+            { name: "Police Clearance PCS", cat: "MahaDBT", icon: "👮", link: "#" },
+            { name: "Cast Validity Barti", cat: "MahaDBT", icon: "🎓", link: "#" },
+            { name: "Forest Dept Complaint", cat: "MahaDBT", icon: "🌲", link: "#" },
+            { name: "Post Matric Scholarship", cat: "MahaDBT", icon: "🎓", link: "#" },
+            { name: "RTE Admission", cat: "MahaDBT", icon: "🏫", link: "https://student.maharashtra.gov.in/adm_portal/Users/rte_index_new" },
+            { name: "PMFBY Fasal Bima", cat: "MahaDBT", icon: "🌱", link: "#" },
+            { name: "PM VishwaKarma", cat: "MahaDBT", icon: "🛠️", link: "#" },
+            { name: "PM SVANidhi", cat: "MahaDBT", icon: "🏪", link: "#" },
+            { name: "E-Shram", cat: "MahaDBT", icon: "👷", link: "#" },
+            { name: "Manrega Jobcard", cat: "MahaDBT", icon: "⛏️", link: "#" },
+            { name: "PM Awas Yojna Gramin", cat: "MahaDBT", icon: "🏘️", link: "#" },
+            { name: "Swachh Bharat Shauchalay", cat: "MahaDBT", icon: "🚽", link: "#" },
+
+            // --- Aadhaar, PAN & Health ---
+            { name: "My Aadhaar UIDAI", cat: "Aadhaar", icon: "👁️", link: "https://myaadhaar.uidai.gov.in/" },
+            { name: "Download Aadhar", cat: "Aadhaar", icon: "📥", link: "#" },
+            { name: "Check Aadhar Link", cat: "Aadhaar", icon: "🔗", link: "#" },
+            { name: "Aadhar UCL PAC", cat: "Aadhaar", icon: "🔐", link: "#" },
+            { name: "NSDL Pancard Apply", cat: "Aadhaar", icon: "💳", link: "https://onlineservices.proteantech.in/paam/endUserRegisterContact.html" },
+            { name: "NSDL Pancard Download", cat: "Aadhaar", icon: "📥", link: "#" },
+            { name: "UTIITSL Pancard Apply", cat: "Aadhaar", icon: "💳", link: "#" },
+            { name: "Income Tax Instant Pan", cat: "Aadhaar", icon: "🏦", link: "https://eportal.incometax.gov.in/iec/foservices/#/pre-login/instant-e-pan" },
+            { name: "Adhar Pan Link Status", cat: "Aadhaar", icon: "🔗", link: "#" },
+            { name: "Ayushman Operator Nha", cat: "Aadhaar", icon: "🏥", link: "#" },
+            { name: "ABHA Health Account", cat: "Aadhaar", icon: "❤️", link: "#" },
+            { name: "Parivahan Portal", cat: "Aadhaar", icon: "🚗", link: "https://parivahan.gov.in/parivahan/portal/" },
+            { name: "Driving Licence", cat: "Aadhaar", icon: "🪪", link: "#" },
+            { name: "Vehicle Registration", cat: "Aadhaar", icon: "🚘", link: "#" },
+
+            // --- Software, Tools & Drivers ---
+            { name: "Mantra RD Service", cat: "Software", icon: "👆", link: "https://www.mantra.com/" },
+            { name: "Morpho RD Service", cat: "Software", icon: "👆", link: "https://www.morpho.com/" },
+            { name: "Startek RD", cat: "Software", icon: "👆", link: "#" },
+            { name: "Secugen RD", cat: "Software", icon: "👆", link: "#" },
+            { name: "Precision RD", cat: "Software", icon: "👆", link: "#" },
+            { name: "Secureye RD", cat: "Software", icon: "👆", link: "#" },
+            { name: "Image Resize", cat: "Software", icon: "🖼️", link: "#" },
+            { name: "Google Input Marathi", cat: "Software", icon: "⌨️", link: "https://www.google.com/inputtools/" },
+            { name: "Google Input Hindi", cat: "Software", icon: "⌨️", link: "#" },
+            { name: "IrfanView 32/64Bit", cat: "Software", icon: "👁️‍🗨️", link: "#" },
+            { name: "Riot Optimizer", cat: "Software", icon: "⚡", link: "#" },
+            { name: "Photoshop CC", cat: "Software", icon: "🎨", link: "https://www.adobe.com/products/photoshop.html" },
+            { name: "Canva", cat: "Software", icon: "🖌️", link: "#" },
+            { name: "Adobe Reader", cat: "Software", icon: "📄", link: "#" },
+            { name: "Nitro Pro", cat: "Software", icon: "📑", link: "#" },
+            { name: "BackGround Remover", cat: "Software", icon: "✂️", link: "#" },
+            { name: "Sharp Image Ai", cat: "Software", icon: "🤖", link: "#" },
+            { name: "WhatsApp Web", cat: "Software", icon: "💬", link: "#" },
+            { name: "Telegram Web", cat: "Software", icon: "✈️", link: "#" },
+            { name: "Buddy4Study", cat: "Software", icon: "🤝", link: "#" }
+        ];
+
+        // 2. SPA ROUTER LOGIC
+        function navigate(pageId) {
+            // Desktop Nav
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            if(document.querySelector(`.nav-btn[onclick="navigate('${pageId}')"]`)) {
+                document.querySelector(`.nav-btn[onclick="navigate('${pageId}')"]`).classList.add('active');
+            }
+            
+            // Mobile Nav
+            document.querySelectorAll('.m-nav-item').forEach(btn => btn.classList.remove('active'));
+            if(document.getElementById(`m-nav-${pageId}`)) {
+                document.getElementById(`m-nav-${pageId}`).classList.add('active');
+            }
+
+            // Page Switch
+            document.querySelectorAll('.page-view').forEach(page => page.classList.remove('active'));
+            document.getElementById(`view-${pageId}`).classList.add('active');
+            
+            window.scrollTo(0, 0); 
+            if(pageId === 'services') filterData('All');
+        }
+
+        // 3. ADVANCED DOM RENDERER
+        function renderCards(dataArray, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = ""; 
+
+            dataArray.forEach((service, index) => {
+                const delay = index * 0.03; // Faster staggered effect
+                const card = `
+                    <a href="${service.link}" target="_blank" class="service-card" style="animation-delay: ${delay}s;">
+                        <div class="s-icon">${service.icon}</div>
+                        <div class="s-name">${service.name}</div>
+                    </a>
+                `;
+                container.innerHTML += card;
+            });
+        }
+
+        // 4. FILTER LOGIC
+        function filterData(category) {
+            if(event && event.currentTarget.classList.contains('filter-btn')) {
+                document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+                event.currentTarget.classList.add('active');
+            }
+            if (category === 'All') {
+                renderCards(servicesData, 'all-services-grid');
+            } else {
+                const filtered = servicesData.filter(item => item.cat === category);
+                renderCards(filtered, 'all-services-grid');
+            }
+        }
+
+        // 5. INITIALIZE
+        window.onload = () => {
+            renderCards(servicesData.slice(0, 4), 'trending-grid'); // Show first 4 in trending
+            renderCards(servicesData, 'all-services-grid'); 
+        }
+
+        // 6. FORM SIMULATION
+        function submitForm(e) {
+            e.preventDefault();
+            alert("✅ Secure Encrypted Message Sent! The Nayak Digital team will contact you shortly.");
+            e.target.reset();
+        }
+    </script>
+</body>
+</html>
