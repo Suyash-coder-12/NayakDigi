@@ -42,6 +42,10 @@
         @keyframes popInStagger { from { opacity: 0; transform: scale(0.8) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
         @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
+        /* --- ANTI-ADBLOCKER PROMO ANIMATIONS --- */
+        @keyframes promoFloat { 0% { transform: translateY(0px) rotate(0deg); box-shadow: 0 10px 25px rgba(255, 153, 51, 0.2); } 50% { transform: translateY(-15px) rotate(1deg); box-shadow: 0 25px 40px rgba(255, 153, 51, 0.4); } 100% { transform: translateY(0px) rotate(0deg); box-shadow: 0 10px 25px rgba(255, 153, 51, 0.2); } }
+        @keyframes promoGlare { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
+
         /* --- TOP RIBBON & ADMIN LINK --- */
         .top-ribbon { background: var(--govt-blue); color: var(--white); font-size: 12px; padding: 8px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.2); font-weight: 600; letter-spacing: 1px; }
         .admin-link { color: var(--saffron); text-decoration: none; display: flex; align-items: center; gap: 5px; transition: 0.3s; padding: 2px 8px; border-radius: 4px; border: 1px solid transparent; }
@@ -80,11 +84,14 @@
         .hero-btn { background: var(--saffron); color: white; border: none; padding: 15px 35px; font-size: 16px; font-weight: 800; border-radius: 30px; cursor: pointer; transition: 0.3s; animation: pulseBorder 2s infinite; }
         .hero-btn:hover { transform: translateY(-5px) scale(1.05); background: #e68a00; }
 
-        /* --- MULTI-AD CAROUSEL (NO CROP) --- */
-        .carousel-container { margin: 40px auto 0 auto; max-width: 800px; border-radius: 20px; overflow: hidden; border: 4px solid var(--saffron); box-shadow: 0 15px 35px rgba(0,0,0,0.15); display: none; position: relative; background: #0A1931; }
+        /* --- MULTI-PROMO CAROUSEL (NO CROP, ANTI-ADBLOCK) --- */
+        .carousel-container { margin: 40px auto 0 auto; max-width: 800px; border-radius: 20px; overflow: hidden; border: 4px solid var(--saffron); box-shadow: 0 15px 35px rgba(0,0,0,0.15); display: none; position: relative; background: #0A1931; animation: promoFloat 5s ease-in-out infinite; cursor: pointer; }
         .carousel-slide { display: none; width: 100%; animation: fadeEffect 1.5s; text-align: center; }
         .carousel-slide.active { display: block; }
-        .carousel-slide img { width: 100%; height: auto; max-height: 400px; object-fit: contain; display: block; margin: 0 auto; }
+        .carousel-slide img { width: 100%; height: auto; max-height: 400px; object-fit: contain; display: block; margin: 0 auto; transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .carousel-container::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 100%); transform: skewX(-25deg); animation: promoGlare 4s infinite; pointer-events: none; z-index: 10;}
+        .carousel-container:hover img { transform: scale(1.05); }
+        .carousel-container:hover { border-color: var(--green); }
         @keyframes fadeEffect { from {opacity: 0.3} to {opacity: 1} }
 
         /* --- LEADERSHIP SECTION --- */
@@ -245,7 +252,7 @@
                 <button class="hero-btn" onclick="navigate('services')">Explore All Services ➔</button>
             </div>
 
-            <div id="ad-carousel" class="carousel-container">
+            <div id="promo-carousel" class="carousel-container">
                 </div>
 
             <div class="leadership-sec">
@@ -347,35 +354,33 @@
         // 1. FIREBASE REAL-TIME CLOUD SYNC LOGIC
         // ------------------------------------------
         const firebaseConfig = {
-            // ⚠️ YOUR FIREBASE DB URL HERE
+            // ⚠️ PASTE YOUR EXACT FIREBASE URL HERE ⚠️
             databaseURL: "https://nayakdigi-4be38-default-rtdb.firebaseio.com" 
         };
         
         if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
         const db = firebase.database();
 
-        let slideInterval; // Variable to control the auto-slider
+        let slideInterval; 
 
-        // Real-Time Ad Carousel Sync
+        // AdBlocker Safe Listener - Fetches from 'ads' but renders as 'promo'
         db.ref('liveData/ads').on('value', (snapshot) => {
-            const adsArray = snapshot.val() || [];
-            const container = document.getElementById('ad-carousel');
+            const promoArray = snapshot.val() || [];
+            const container = document.getElementById('promo-carousel');
             
-            if(adsArray.length > 0) {
+            if(promoArray.length > 0) {
                 container.style.display = 'block';
                 let htmlContent = "";
                 
-                // Build HTML for each ad slide
-                adsArray.forEach((adUrl, index) => {
+                promoArray.forEach((imgUrl, index) => {
                     htmlContent += `<div class="carousel-slide ${index === 0 ? 'active' : ''}">
-                                        <img src="${adUrl}" alt="Live Offer">
+                                        <img src="${imgUrl}" alt="Latest Update">
                                     </div>`;
                 });
                 container.innerHTML = htmlContent;
 
-                // Auto-Slider Logic (Changes image every 4 seconds)
                 clearInterval(slideInterval); 
-                if(adsArray.length > 1) {
+                if(promoArray.length > 1) {
                     let slideIndex = 0;
                     slideInterval = setInterval(() => {
                         let slides = document.getElementsByClassName("carousel-slide");
@@ -387,10 +392,10 @@
                         slideIndex++;
                         if (slideIndex >= slides.length) { slideIndex = 0; }    
                         slides[slideIndex].classList.add("active");
-                    }, 4000); 
+                    }, 4000); // Slidess every 4 seconds
                 }
             } else {
-                container.style.display = 'none'; // Hide if array is empty
+                container.style.display = 'none'; 
             }
         });
 
@@ -401,6 +406,7 @@
                 document.getElementById('ticker-text').innerText = `📢 BREAKING: ${alertText} | Contact Nayak Digital Seva Kendra for urgent assistance!`;
             }
         });
+
 
         // ------------------------------------------
         // 2. THE 150+ SERVICES DATABASE ARRAY
@@ -529,7 +535,7 @@
             container.innerHTML = ""; 
 
             dataArray.forEach((service, index) => {
-                const delay = index * 0.02; // Very fast staggered effect
+                const delay = index * 0.02; // Fast stagger animation
                 const card = `
                     <a href="${service.link}" target="_blank" class="service-card" style="animation-delay: ${delay}s;">
                         <div class="s-icon">${service.icon}</div>
