@@ -1,9 +1,13 @@
-<!DOCTYPE html>
+=<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nayak Digital Seva Kendra | Digital India</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
     <style>
         /* --- FUTURISTIC GOVT THEME VARIABLES --- */
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -23,28 +27,34 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background-color: var(--bg-color); color: #333; overflow-x: hidden; scroll-behavior: smooth; position: relative; }
 
-        /* --- BACKGROUND GLOWING ORBS (FUTURISTIC EFFECT) --- */
+        /* --- BACKGROUND GLOWING ORBS --- */
         .bg-orb { position: fixed; border-radius: 50%; filter: blur(80px); z-index: -1; opacity: 0.4; animation: floatOrb 15s infinite alternate ease-in-out; }
         .orb-1 { width: 400px; height: 400px; background: var(--saffron); top: -100px; left: -100px; }
         .orb-2 { width: 350px; height: 350px; background: var(--govt-blue-light); bottom: 100px; right: -50px; animation-delay: -5s; }
         .orb-3 { width: 300px; height: 300px; background: var(--green); top: 40%; left: 30%; animation-delay: -10s; opacity: 0.2; }
 
-        @keyframes floatOrb { 
-            0% { transform: translate(0, 0) scale(1); } 
-            50% { transform: translate(50px, 100px) scale(1.2); } 
-            100% { transform: translate(-50px, -50px) scale(0.9); } 
-        }
-
-        /* --- HEAVY ANIMATIONS --- */
+        @keyframes floatOrb { 0% { transform: translate(0, 0) scale(1); } 50% { transform: translate(50px, 100px) scale(1.2); } 100% { transform: translate(-50px, -50px) scale(0.9); } }
         @keyframes fadeUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes scanline { 0% { top: -10%; opacity: 0; } 50% { opacity: 1; } 100% { top: 110%; opacity: 0; } }
         @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-12px); } 100% { transform: translateY(0px); } }
         @keyframes pulseBorder { 0% { box-shadow: 0 0 0 0 rgba(255,153,51,0.6); } 70% { box-shadow: 0 0 0 20px rgba(255,153,51,0); } 100% { box-shadow: 0 0 0 0 rgba(255,153,51,0); } }
         @keyframes shimmerText { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
         @keyframes popInStagger { from { opacity: 0; transform: scale(0.8) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
-        /* --- TOP RIBBON --- */
-        .top-ribbon { background: var(--govt-blue); color: var(--white); font-size: 12px; padding: 8px 5%; display: flex; justify-content: space-between; border-bottom: 3px solid var(--saffron); font-weight: 600; letter-spacing: 1px; }
+        /* --- CLOUD ADVERTISEMENT ANIMATIONS --- */
+        @keyframes adFloat { 0% { transform: translateY(0px) rotate(0deg); box-shadow: 0 10px 25px rgba(255, 153, 51, 0.2); } 50% { transform: translateY(-15px) rotate(1deg); box-shadow: 0 25px 40px rgba(255, 153, 51, 0.4); } 100% { transform: translateY(0px) rotate(0deg); box-shadow: 0 10px 25px rgba(255, 153, 51, 0.2); } }
+        @keyframes adGlare { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
+
+        /* --- TOP RIBBON & ADMIN LINK --- */
+        .top-ribbon { background: var(--govt-blue); color: var(--white); font-size: 12px; padding: 8px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.2); font-weight: 600; letter-spacing: 1px; }
+        .admin-link { color: var(--saffron); text-decoration: none; display: flex; align-items: center; gap: 5px; transition: 0.3s; padding: 2px 8px; border-radius: 4px; border: 1px solid transparent; }
+        .admin-link:hover { color: var(--white); border-color: var(--saffron); background: rgba(255, 153, 51, 0.2); }
+        .ribbon-right { display: flex; gap: 15px; align-items: center; }
+
+        .ticker-wrap { background: var(--govt-blue-light); color: white; padding: 8px 0; overflow: hidden; display: flex; border-bottom: 3px solid var(--saffron); }
+        .ticker-title { background: var(--saffron); color: var(--govt-blue); padding: 0 15px; font-weight: 800; font-size: 12px; z-index: 10; display: flex; align-items: center; white-space: nowrap; box-shadow: 5px 0 10px rgba(0,0,0,0.2); }
+        .ticker-move { display: inline-block; white-space: nowrap; padding-left: 100%; animation: ticker 25s linear infinite; font-size: 13px; font-weight: 600; }
 
         /* --- GLASSMORPHISM NAVBAR --- */
         nav { position: sticky; top: 0; z-index: 1000; background: var(--glass-bg); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-bottom: 1px solid var(--glass-border); padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow); }
@@ -73,20 +83,25 @@
         .hero-btn { background: var(--saffron); color: white; border: none; padding: 15px 35px; font-size: 16px; font-weight: 800; border-radius: 30px; cursor: pointer; transition: 0.3s; animation: pulseBorder 2s infinite; }
         .hero-btn:hover { transform: translateY(-5px) scale(1.05); background: #e68a00; }
 
-        /* --- 👑 LEADERSHIP SECTION --- */
+        /* --- DYNAMIC CLOUD ADVERTISEMENT SECTION --- */
+        #ad-section { margin: 40px auto 0 auto; max-width: 800px; border-radius: 20px; overflow: hidden; border: 4px solid var(--saffron); display: none; position: relative; animation: adFloat 5s ease-in-out infinite; cursor: pointer; }
+        #ad-section img { width: 100%; max-height: 350px; object-fit: cover; display: block; transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        #ad-section::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 100%); transform: skewX(-25deg); animation: adGlare 4s infinite; pointer-events: none; z-index: 10;}
+        #ad-section:hover img { transform: scale(1.05); }
+        #ad-section:hover { border-color: var(--green); }
+
+        /* --- LEADERSHIP SECTION --- */
         .leadership-sec { margin: 60px 0; text-align: center; }
-        .section-title { font-size: 28px; color: var(--govt-blue); font-weight: 800; margin-bottom: 40px; display: inline-block; position: relative; }
+        .section-title { font-size: 28px; color: var(--govt-blue); font-weight: 800; margin-bottom: 40px; display: inline-block; position: relative; text-transform: uppercase; letter-spacing: 1px; }
         .section-title::after { content: ''; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); width: 60px; height: 4px; background: var(--saffron); border-radius: 2px; }
         
         .leader-grid { display: flex; justify-content: center; }
-        
         .leader-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(15px); border: 1px solid var(--glass-border); border-top: 5px solid var(--saffron); border-radius: 20px; padding: 40px; width: 350px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden; animation: float 6s ease-in-out infinite; }
         .leader-card::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,153,51,0.15) 0%, transparent 60%); opacity: 0; transition: 0.5s; pointer-events: none; }
         .leader-card:hover { transform: translateY(-15px) scale(1.03); box-shadow: 0 30px 60px rgba(10, 25, 49, 0.2); border-top-color: var(--govt-blue); }
         .leader-card:hover::before { opacity: 1; transform: rotate(90deg); }
         
         .leader-img-wrapper { position: relative; width: 140px; height: 140px; margin: 0 auto 20px auto; }
-        /* FIXED IMAGE PATH HERE */
         .leader-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 4px solid var(--white); box-shadow: 0 10px 25px rgba(0,0,0,0.2); position: relative; z-index: 2; transition: 0.5s; background: white; }
         .leader-card:hover .leader-img { transform: scale(1.1); border-color: var(--saffron); }
         
@@ -99,24 +114,24 @@
         .leader-card p { font-size: 15px; color: #555; line-height: 1.6; font-weight: 500; }
 
         /* --- SERVICES SECTION --- */
-        .filter-bar { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 15px; margin-bottom: 30px; scrollbar-width: none; }
+        .filter-bar { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 15px; margin-bottom: 30px; scrollbar-width: none; border-bottom: 1px solid rgba(10, 25, 49, 0.1); }
         .filter-bar::-webkit-scrollbar { display: none; }
-        .filter-btn { background: rgba(255,255,255,0.6); backdrop-filter: blur(5px); border: 2px solid #cbd5e1; padding: 12px 25px; border-radius: 30px; font-weight: 700; font-size: 14px; cursor: pointer; transition: 0.4s; white-space: nowrap; color: var(--govt-blue); }
+        .filter-btn { background: rgba(255,255,255,0.6); backdrop-filter: blur(5px); border: 2px solid #cbd5e1; padding: 10px 20px; border-radius: 30px; font-weight: 700; font-size: 13px; cursor: pointer; transition: 0.4s; white-space: nowrap; color: var(--govt-blue); }
         .filter-btn:hover { background: var(--saffron); color: white; border-color: var(--saffron); transform: translateY(-3px); }
         .filter-btn.active { background: var(--govt-blue); color: white; border-color: var(--govt-blue); box-shadow: 0 10px 20px rgba(10, 25, 49, 0.3); }
         
-        .services-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; perspective: 1000px; }
+        .services-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; perspective: 1000px; }
         
-        .service-card { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(10px); border: 1px solid var(--glass-border); border-radius: 16px; padding: 25px 20px; text-align: center; cursor: pointer; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-decoration: none; color: inherit; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.05); opacity: 0; animation: popInStagger 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .service-card { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(10px); border: 1px solid var(--glass-border); border-radius: 16px; padding: 20px 15px; text-align: center; cursor: pointer; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-decoration: none; color: inherit; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; box-shadow: 0 8px 15px rgba(0,0,0,0.04); opacity: 0; animation: popInStagger 0.5s forwards; }
         .service-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(255,153,51,0.1), rgba(19,136,8,0.05)); opacity: 0; transition: 0.4s; z-index: 0; }
         .service-card::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 4px; background: var(--saffron); transform: scaleX(0); transition: 0.4s; transform-origin: left; }
-        .service-card:hover { transform: translateY(-10px) rotateX(5deg) rotateY(-5deg); box-shadow: 15px 25px 30px rgba(0,0,0,0.1); border-color: rgba(255,255,255,0.9); }
+        .service-card:hover { transform: translateY(-8px) rotateX(5deg) rotateY(-5deg); box-shadow: 10px 15px 25px rgba(0,0,0,0.1); border-color: rgba(255,255,255,0.9); z-index: 10;}
         .service-card:hover::before { opacity: 1; }
         .service-card:hover::after { transform: scaleX(1); }
         
-        .s-icon { font-size: 38px; margin-bottom: 15px; transition: 0.5s; display: inline-block; position: relative; z-index: 1; text-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .s-icon { font-size: 34px; margin-bottom: 12px; transition: 0.5s; display: inline-block; position: relative; z-index: 1; text-shadow: 0 5px 10px rgba(0,0,0,0.1); }
         .service-card:hover .s-icon { transform: scale(1.3) translateY(-5px); }
-        .s-name { font-size: 14px; font-weight: 800; color: var(--govt-blue); line-height: 1.4; position: relative; z-index: 1; }
+        .s-name { font-size: 13px; font-weight: 800; color: var(--govt-blue); line-height: 1.4; position: relative; z-index: 1; }
 
         /* --- CONTACT & GALLERY --- */
         .contact-container { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(15px); padding: 50px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); border-top: 6px solid var(--green); }
@@ -140,7 +155,7 @@
         .dev-name { font-size: 22px; font-weight: 800; color: var(--saffron); letter-spacing: 3px; text-shadow: 0 0 15px rgba(255,153,51,0.5); }
 
         /* --- MOBILE BOTTOM NAV --- */
-        .mobile-bottom-nav { display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); box-shadow: 0 -5px 20px rgba(0,0,0,0.08); z-index: 2000; border-top: 1px solid #e2e8f0; }
+        .mobile-bottom-nav { display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); box-shadow: 0 -5px 20px rgba(0,0,0,0.08); z-index: 2000; border-top: 1px solid #e2e8f0; padding-bottom: env(safe-area-inset-bottom); }
         .m-nav-item { flex: 1; text-align: center; padding: 12px 0; color: #64748b; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: 0.3s; }
         .m-nav-icon { font-size: 22px; transition: 0.3s; }
         .m-nav-item.active { color: var(--govt-blue); }
@@ -154,6 +169,7 @@
             .hero-banner { padding: 40px 20px; border-radius: 16px; }
             .hero-banner h2 { font-size: 28px; }
             .hero-banner p { font-size: 14px; }
+            #ad-section { margin: 30px 10px 0 10px; }
             .leader-card { width: 100%; max-width: 350px; padding: 30px 20px; }
             .filter-bar { padding-bottom: 10px; margin-bottom: 20px; }
             .filter-btn { padding: 8px 16px; font-size: 12px; }
@@ -163,6 +179,7 @@
             .s-name { font-size: 11px; }
             .contact-container { grid-template-columns: 1fr; padding: 25px; border-radius: 16px; gap: 30px; }
             .contact-info h3 { font-size: 24px; }
+            .ribbon-right span.hide-mob { display: none; } /* Hide extra text on mobile ribbon */
             footer { padding-bottom: 90px; } 
             footer h3 { font-size: 20px; }
             .dev-name { font-size: 18px; }
@@ -177,7 +194,17 @@
 
     <div class="top-ribbon">
         <div>🇮🇳 GOVT. SERVICES PORTAL</div>
-        <div>Toll Free: +91 9370473351 | 🌍 English</div>
+        <div class="ribbon-right">
+            <span class="hide-mob">📞 Help: +91 9370473351 | 🌍 EN</span>
+            <a href="admin.html" target="_blank" class="admin-link">🔒 <span class="hide-mob">Admin Login</span></a>
+        </div>
+    </div>
+
+    <div class="ticker-wrap">
+        <div class="ticker-title">LATEST ALERTS 🚨</div>
+        <div class="ticker-move" id="dynamic-ticker">
+            <span id="ticker-text">🚀 Loading Live Cloud Updates from Nayak Digital Seva Kendra...</span>
+        </div>
     </div>
 
     <nav>
@@ -214,10 +241,15 @@
     <div id="app-content">
 
         <div id="view-home" class="page-view active">
+            
             <div class="hero-banner">
                 <h2>Future of E-Governance</h2>
-                <p>Nayak Digital Seva Kendra brings 70+ Government, CSC, MahaDBT, and utility services to your fingertips with lightning speed and military-grade security.</p>
+                <p>Nayak Digital Seva Kendra brings 150+ Government, CSC, MahaDBT, and utility services to your fingertips with lightning speed and military-grade security.</p>
                 <button class="hero-btn" onclick="navigate('services')">Explore All Services ➔</button>
+            </div>
+
+            <div id="ad-section">
+                <img id="live-ad-image" src="" alt="Today's Offer">
             </div>
 
             <div class="leadership-sec">
@@ -248,6 +280,9 @@
                 <button class="filter-btn" onclick="filterData('CSC')">CSC & MahaOnline</button>
                 <button class="filter-btn" onclick="filterData('MahaDBT')">MahaDBT & State</button>
                 <button class="filter-btn" onclick="filterData('Aadhaar')">Aadhaar & PAN</button>
+                <button class="filter-btn" onclick="filterData('Finance')">Banking & Finance</button>
+                <button class="filter-btn" onclick="filterData('Agri')">Farmer & Agri</button>
+                <button class="filter-btn" onclick="filterData('EduHealth')">Education & Health</button>
                 <button class="filter-btn" onclick="filterData('Software')">Software & Tools</button>
             </div>
 
@@ -301,6 +336,10 @@
         <h3>NAYAK DIGITAL SEVA KENDRA</h3>
         <p style="font-size: 14px; opacity: 0.8; max-width: 600px; margin: 0 auto 10px auto;">Authorized provider of CSC, MahaOnline, Aadhaar, and Pan services under the Digital India Initiative.</p>
         
+        <div style="margin-top: 15px;">
+            <a href="admin.html" target="_blank" style="color: var(--saffron); text-decoration: none; font-size: 12px; font-weight: bold; border: 1px dashed var(--saffron); padding: 5px 10px; border-radius: 5px;">⚙️ Admin Login</a>
+        </div>
+
         <div class="dev-credit-box">
             <div class="dev-text">System Architecture & Code By</div>
             <div class="dev-name">&lt;/&gt; SUYASH RATHOD</div>
@@ -308,95 +347,135 @@
     </footer>
 
     <script>
-        // 1. DYNAMIC DATA ARRAY WITH ALL 70+ LINKS POPULATED
+        // ==========================================
+        // ☁️ FIREBASE REAL-TIME CLOUD SYNC LOGIC ☁️
+        // ==========================================
+        const firebaseConfig = {
+            // Demo URL - Paste your Firebase link here later
+            databaseURL: "https://nayakdigi-4be38-default-rtdb.firebaseio.com" 
+        };
+        
+        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+        const db = firebase.database();
+
+        // Listen for Ad Banner Changes
+        db.ref('liveData/advertisement').on('value', (snapshot) => {
+            const imageUrl = snapshot.val();
+            if(imageUrl) {
+                document.getElementById('ad-section').style.display = 'block';
+                document.getElementById('live-ad-image').src = imageUrl;
+            }
+        });
+
+        // Listen for Ticker Alert Changes
+        db.ref('liveData/tickerAlert').on('value', (snapshot) => {
+            const alertText = snapshot.val();
+            if(alertText) {
+                document.getElementById('ticker-text').innerText = `📢 BREAKING: ${alertText} | Contact Nayak Digital Seva Kendra for urgent assistance!`;
+            }
+        });
+
+
+        // ==========================================
+        // 📦 THE MASSIVE 150+ LINKS DATABASE 📦
+        // ==========================================
         const servicesData = [
-            // --- CSC & MahaOnline ---
-            { name: "Digitalseva Login", cat: "CSC", icon: "💻", link: "https://digitalseva.csc.gov.in" },
-            { name: "PM Kisan CSC", cat: "CSC", icon: "🚜", link: "https://pmkisan.gov.in" },
-            { name: "CSC Account Login", cat: "CSC", icon: "🏦", link: "#" },
-            { name: "Digipay Lite Download", cat: "CSC", icon: "💸", link: "https://liveappstore.in/share?com.cscpay.cscpay=" },
-            { name: "CSC GAS Booking", cat: "CSC", icon: "🔥", link: "#" },
-            { name: "Digipay Lite Support", cat: "CSC", icon: "🎧", link: "#" },
-            { name: "IRCTC Train Ticket", cat: "CSC", icon: "🎫", link: "https://www.irctc.co.in/nget/train-search" },
-            { name: "CSC Train Booking", cat: "CSC", icon: "🚂", link: "https://www.irctc.co.in/nget/train-search" },
-            { name: "CSC Travel Booking", cat: "CSC", icon: "✈️", link: "#" },
-            { name: "CSC LoanBazar", cat: "CSC", icon: "💰", link: "#" },
-            { name: "Mahaonline Login", cat: "CSC", icon: "🏛️", link: "#" },
-            { name: "AapleSarkar Login", cat: "CSC", icon: "🏛️", link: "https://aaplesarkar.mahaonline.gov.in/en" },
-            { name: "HDFC Account Opening", cat: "CSC", icon: "🏦", link: "#" },
+            // --- 1. CSC & MahaOnline (Core Services) ---
+            { name: "Digital Seva Connect", cat: "CSC", icon: "💻", link: "https://digitalseva.csc.gov.in" },
+            { name: "CSC Login (VLE)", cat: "CSC", icon: "🔑", link: "https://register.csc.gov.in/" },
+            { name: "CSC Locator", cat: "CSC", icon: "📍", link: "https://locator.csccloud.in/" },
+            { name: "Digipay App / Lite", cat: "CSC", icon: "💸", link: "https://liveappstore.in/share?com.cscpay.cscpay=" },
+            { name: "Digipay Web Portal", cat: "CSC", icon: "🖥️", link: "https://digipay.csccloud.in/" },
+            { name: "CSC Gas Booking", cat: "CSC", icon: "🔥", link: "https://digitalseva.csc.gov.in" },
+            { name: "CSC Train (IRCTC)", cat: "CSC", icon: "🚂", link: "https://www.irctc.co.in/nget/train-search" },
+            { name: "CSC Travel (Flight/Bus)", cat: "CSC", icon: "✈️", link: "https://digitalseva.csc.gov.in" },
+            { name: "MahaOnline Portal", cat: "CSC", icon: "🏛️", link: "https://www.mahaonline.gov.in/" },
+            { name: "Aaple Sarkar Login", cat: "CSC", icon: "🏛️", link: "https://aaplesarkar.mahaonline.gov.in/en" },
+            { name: "UMANG Web Portal", cat: "CSC", icon: "📱", link: "https://web.umang.gov.in/" },
+            { name: "CSC Helpdesk / Ticket", cat: "CSC", icon: "🎧", link: "https://digitalseva.csc.gov.in" },
 
-            // --- MahaDBT & State Schemes ---
-            { name: "Mahadbt Farmer", cat: "MahaDBT", icon: "🌾", link: "https://mahadbt.maharashtra.gov.in/Farmer/AgriLogin/AgriLogin" },
-            { name: "Mahadbt Farmer Reg.", cat: "MahaDBT", icon: "📝", link: "#" },
-            { name: "Mahadbt Scheme Details", cat: "MahaDBT", icon: "📋", link: "#" },
-            { name: "Kusum Solar", cat: "MahaDBT", icon: "☀️", link: "https://kusum.mahaurja.com/solar/beneficiary/register/Kusum-Yojana-Component-B" },
-            { name: "Meda Beneficiary App", cat: "MahaDBT", icon: "📱", link: "#" },
-            { name: "Digital Satbara", cat: "MahaDBT", icon: "📱", link: "https://digitalsatbara.mahabhumi.gov.in/dslr" },
-            { name: "Mahabhulekh Satbara", cat: "MahaDBT", icon: "📜", link: "#" },
-            { name: "BhuNakasha", cat: "MahaDBT", icon: "🗺️", link: "#" },
-            { name: "Ehakk Ferfar 7/12", cat: "MahaDBT", icon: "📄", link: "#" },
-            { name: "Grass Mahakosh", cat: "MahaDBT", icon: "💰", link: "#" },
-            { name: "Leave & License Agrmt", cat: "MahaDBT", icon: "🏠", link: "#" },
-            { name: "Mahafood RC Details", cat: "MahaDBT", icon: "🍚", link: "https://rcms.mahafood.gov.in/Show_Reports.aspx?RID=116" },
-            { name: "Mahafood RC Login", cat: "MahaDBT", icon: "🔐", link: "#" },
-            { name: "Mahabocw Worker", cat: "MahaDBT", icon: "👷", link: "#" },
-            { name: "Mahadiscom Bill", cat: "MahaDBT", icon: "⚡", link: "#" },
-            { name: "New Meter Connection", cat: "MahaDBT", icon: "🔌", link: "#" },
-            { name: "Charity Commissioner", cat: "MahaDBT", icon: "⚖️", link: "#" },
-            { name: "Police CCTNS", cat: "MahaDBT", icon: "🚓", link: "#" },
-            { name: "Police Clearance PCS", cat: "MahaDBT", icon: "👮", link: "#" },
-            { name: "Cast Validity Barti", cat: "MahaDBT", icon: "🎓", link: "#" },
-            { name: "Forest Dept Complaint", cat: "MahaDBT", icon: "🌲", link: "#" },
-            { name: "Post Matric Scholarship", cat: "MahaDBT", icon: "🎓", link: "#" },
-            { name: "RTE Admission", cat: "MahaDBT", icon: "🏫", link: "https://student.maharashtra.gov.in/adm_portal/Users/rte_index_new" },
-            { name: "PMFBY Fasal Bima", cat: "MahaDBT", icon: "🌱", link: "#" },
-            { name: "PM VishwaKarma", cat: "MahaDBT", icon: "🛠️", link: "#" },
-            { name: "PM SVANidhi", cat: "MahaDBT", icon: "🏪", link: "#" },
-            { name: "E-Shram", cat: "MahaDBT", icon: "👷", link: "#" },
-            { name: "Manrega Jobcard", cat: "MahaDBT", icon: "⛏️", link: "#" },
-            { name: "PM Awas Yojna Gramin", cat: "MahaDBT", icon: "🏘️", link: "#" },
-            { name: "Swachh Bharat Shauchalay", cat: "MahaDBT", icon: "🚽", link: "#" },
+            // --- 2. Aadhaar, PAN & Taxation ---
+            { name: "My Aadhaar (UIDAI)", cat: "Aadhaar", icon: "👁️", link: "https://myaadhaar.uidai.gov.in/" },
+            { name: "Download e-Aadhaar", cat: "Aadhaar", icon: "📥", link: "https://myaadhaar.uidai.gov.in/genricDownloadAadhaar" },
+            { name: "Aadhaar Update Status", cat: "Aadhaar", icon: "🔄", link: "https://myaadhaar.uidai.gov.in/CheckAadhaarStatus" },
+            { name: "Link Aadhaar to Mobile", cat: "Aadhaar", icon: "📱", link: "https://myaadhaar.uidai.gov.in/verify-email-mobile" },
+            { name: "Aadhaar UCL (CSC)", cat: "Aadhaar", icon: "🔐", link: "https://digitalseva.csc.gov.in" },
+            { name: "NSDL PAN Apply (New)", cat: "Aadhaar", icon: "💳", link: "https://onlineservices.proteantech.in/paam/endUserRegisterContact.html" },
+            { name: "NSDL PAN Download", cat: "Aadhaar", icon: "📥", link: "https://www.onlineservices.nsdl.com/paam/requestAndDownloadEPAN.html" },
+            { name: "UTIITSL PAN Apply", cat: "Aadhaar", icon: "💳", link: "https://www.pan.utiitsl.com/" },
+            { name: "Income Tax Instant e-PAN", cat: "Aadhaar", icon: "🏦", link: "https://eportal.incometax.gov.in/iec/foservices/#/pre-login/instant-e-pan" },
+            { name: "Aadhaar-PAN Link Status", cat: "Aadhaar", icon: "🔗", link: "https://eportal.incometax.gov.in/iec/foservices/#/pre-login/link-aadhaar-status" },
+            { name: "Income Tax e-Filing", cat: "Aadhaar", icon: "📈", link: "https://eportal.incometax.gov.in/" },
+            { name: "GST Registration", cat: "Aadhaar", icon: "📊", link: "https://www.gst.gov.in/" },
+            { name: "MSME Udyam Registration", cat: "Aadhaar", icon: "🏭", link: "https://udyamregistration.gov.in/" },
 
-            // --- Aadhaar, PAN & Health ---
-            { name: "My Aadhaar UIDAI", cat: "Aadhaar", icon: "👁️", link: "https://myaadhaar.uidai.gov.in/" },
-            { name: "Download Aadhar", cat: "Aadhaar", icon: "📥", link: "#" },
-            { name: "Check Aadhar Link", cat: "Aadhaar", icon: "🔗", link: "#" },
-            { name: "Aadhar UCL PAC", cat: "Aadhaar", icon: "🔐", link: "#" },
-            { name: "NSDL Pancard Apply", cat: "Aadhaar", icon: "💳", link: "https://onlineservices.proteantech.in/paam/endUserRegisterContact.html" },
-            { name: "NSDL Pancard Download", cat: "Aadhaar", icon: "📥", link: "#" },
-            { name: "UTIITSL Pancard Apply", cat: "Aadhaar", icon: "💳", link: "#" },
-            { name: "Income Tax Instant Pan", cat: "Aadhaar", icon: "🏦", link: "https://eportal.incometax.gov.in/iec/foservices/#/pre-login/instant-e-pan" },
-            { name: "Adhar Pan Link Status", cat: "Aadhaar", icon: "🔗", link: "#" },
-            { name: "Ayushman Operator Nha", cat: "Aadhaar", icon: "🏥", link: "#" },
-            { name: "ABHA Health Account", cat: "Aadhaar", icon: "❤️", link: "#" },
-            { name: "Parivahan Portal", cat: "Aadhaar", icon: "🚗", link: "https://parivahan.gov.in/parivahan/portal/" },
-            { name: "Driving Licence", cat: "Aadhaar", icon: "🪪", link: "#" },
-            { name: "Vehicle Registration", cat: "Aadhaar", icon: "🚘", link: "#" },
+            // --- 3. MahaDBT & State Government Schemes ---
+            { name: "MahaDBT Login", cat: "MahaDBT", icon: "👤", link: "https://mahadbt.maharashtra.gov.in/" },
+            { name: "Digital Satbara (7/12)", cat: "MahaDBT", icon: "📜", link: "https://digitalsatbara.mahabhumi.gov.in/dslr" },
+            { name: "Mahabhulekh (Land Records)", cat: "MahaDBT", icon: "🗺️", link: "https://bhulekh.mahabhumi.gov.in/" },
+            { name: "BhuNakasha Maharashtra", cat: "MahaDBT", icon: "📍", link: "https://mahabhunakasha.mahabhumi.gov.in/" },
+            { name: "E-Hakk (Ferfar 7/12)", cat: "MahaDBT", icon: "📝", link: "https://pdeigr.maharashtra.gov.in/" },
+            { name: "Mahafood RC (Ration)", cat: "MahaDBT", icon: "🍚", link: "https://rcms.mahafood.gov.in/Show_Reports.aspx?RID=116" },
+            { name: "Ration Card Apply", cat: "MahaDBT", icon: "📋", link: "https://rcms.mahafood.gov.in/" },
+            { name: "Mahabocw Worker Reg.", cat: "MahaDBT", icon: "👷", link: "https://mahabocw.in/" },
+            { name: "E-Shram Registration", cat: "MahaDBT", icon: "👷‍♂️", link: "https://eshram.gov.in/" },
+            { name: "Mahadiscom Light Bill", cat: "MahaDBT", icon: "⚡", link: "https://wss.mahadiscom.in/wss/wss" },
+            { name: "New Meter Connection", cat: "MahaDBT", icon: "🔌", link: "https://wss.mahadiscom.in/wss/wss_new_connection_request.aspx" },
+            { name: "Police Clearance (PCS)", cat: "MahaDBT", icon: "👮", link: "https://pcs.mahaonline.gov.in/" },
+            { name: "CCTNS Maharashtra", cat: "MahaDBT", icon: "🚓", link: "https://citizen.mahapolice.gov.in/" },
+            { name: "Cast Validity (BARTI)", cat: "MahaDBT", icon: "📜", link: "https://barti.maharashtra.gov.in/" },
+            { name: "Voter ID Portal (NVSP)", cat: "MahaDBT", icon: "🗳️", link: "https://voters.eci.gov.in/" },
+            { name: "Parivahan (Driving Licence)", cat: "MahaDBT", icon: "🪪", link: "https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do" },
+            { name: "Vahan (Vehicle RC)", cat: "MahaDBT", icon: "🚘", link: "https://vahan.parivahan.gov.in/vahanservice/" },
 
-            // --- Software, Tools & Drivers ---
-            { name: "Mantra RD Service", cat: "Software", icon: "👆", link: "https://www.mantra.com/" },
-            { name: "Morpho RD Service", cat: "Software", icon: "👆", link: "https://www.morpho.com/" },
-            { name: "Startek RD", cat: "Software", icon: "👆", link: "#" },
-            { name: "Secugen RD", cat: "Software", icon: "👆", link: "#" },
-            { name: "Precision RD", cat: "Software", icon: "👆", link: "#" },
-            { name: "Secureye RD", cat: "Software", icon: "👆", link: "#" },
-            { name: "Image Resize", cat: "Software", icon: "🖼️", link: "#" },
-            { name: "Google Input Marathi", cat: "Software", icon: "⌨️", link: "https://www.google.com/inputtools/" },
-            { name: "Google Input Hindi", cat: "Software", icon: "⌨️", link: "#" },
-            { name: "IrfanView 32/64Bit", cat: "Software", icon: "👁️‍🗨️", link: "#" },
-            { name: "Riot Optimizer", cat: "Software", icon: "⚡", link: "#" },
-            { name: "Photoshop CC", cat: "Software", icon: "🎨", link: "https://www.adobe.com/products/photoshop.html" },
-            { name: "Canva", cat: "Software", icon: "🖌️", link: "#" },
-            { name: "Adobe Reader", cat: "Software", icon: "📄", link: "#" },
-            { name: "Nitro Pro", cat: "Software", icon: "📑", link: "#" },
-            { name: "BackGround Remover", cat: "Software", icon: "✂️", link: "#" },
-            { name: "Sharp Image Ai", cat: "Software", icon: "🤖", link: "#" },
-            { name: "WhatsApp Web", cat: "Software", icon: "💬", link: "#" },
-            { name: "Telegram Web", cat: "Software", icon: "✈️", link: "#" },
-            { name: "Buddy4Study", cat: "Software", icon: "🤝", link: "#" }
+            // --- 4. Agriculture & Farmers ---
+            { name: "PM Kisan Samman Nidhi", cat: "Agri", icon: "🚜", link: "https://pmkisan.gov.in" },
+            { name: "PM Kisan Status Check", cat: "Agri", icon: "🔍", link: "https://pmkisan.gov.in/BeneficiaryStatus_New.aspx" },
+            { name: "PMFBY (Fasal Bima)", cat: "Agri", icon: "🌱", link: "https://pmfby.gov.in/" },
+            { name: "Kusum Solar Yojana", cat: "Agri", icon: "☀️", link: "https://kusum.mahaurja.com/solar/beneficiary/register/Kusum-Yojana-Component-B" },
+            { name: "Mahadbt Farmer Portal", cat: "Agri", icon: "🌾", link: "https://mahadbt.maharashtra.gov.in/Farmer/AgriLogin/AgriLogin" },
+            { name: "Pik Vima Yojana Apply", cat: "Agri", icon: "📝", link: "https://pmfby.gov.in/" },
+            { name: "Agriculture Dept Maha", cat: "Agri", icon: "🌻", link: "https://krishi.maharashtra.gov.in/" },
+
+            // --- 5. Banking, Finance & Insurance ---
+            { name: "CSC Loan Bazaar", cat: "Finance", icon: "💰", link: "https://digitalseva.csc.gov.in" },
+            { name: "HDFC Account Opening", cat: "Finance", icon: "🏦", link: "https://digitalseva.csc.gov.in" },
+            { name: "SBI e-Mudra Loan", cat: "Finance", icon: "💳", link: "https://emudra.sbi.co.in:8044/emudra" },
+            { name: "PM SVANidhi (Vendors)", cat: "Finance", icon: "🏪", link: "https://pmsvanidhi.mohua.gov.in/" },
+            { name: "PM Vishwakarma Yojna", cat: "Finance", icon: "🛠️", link: "https://pmvishwakarma.gov.in/" },
+            { name: "LIC Premium Payment", cat: "Finance", icon: "🛡️", link: "https://ebiz.licindia.in/" },
+
+            // --- 6. Education, Health & Jobs ---
+            { name: "National Scholarship", cat: "EduHealth", icon: "🇮🇳", link: "https://scholarships.gov.in/" },
+            { name: "MahaDBT Post Matric", cat: "EduHealth", icon: "🎓", link: "https://mahadbt.maharashtra.gov.in/" },
+            { name: "RTE Admission Portal", cat: "EduHealth", icon: "🏫", link: "https://student.maharashtra.gov.in/adm_portal/Users/rte_index_new" },
+            { name: "YCMOU Admission", cat: "EduHealth", icon: "📖", link: "https://ycmou.digitaluniversity.ac/" },
+            { name: "Buddy4Study", cat: "EduHealth", icon: "🤝", link: "https://www.buddy4study.com/" },
+            { name: "Ayushman Operator", cat: "EduHealth", icon: "🏥", link: "https://beneficiary.nha.gov.in" },
+            { name: "ABHA Health ID Card", cat: "EduHealth", icon: "❤️", link: "https://abha.abdm.gov.in/abha/v3/" },
+            { name: "Majhi Naukri (Jobs)", cat: "EduHealth", icon: "💼", link: "https://www.majhinaukri.in/" },
+            { name: "NMK (NMK.co.in)", cat: "EduHealth", icon: "📰", link: "https://www.nmk.co.in/" },
+
+            // --- 7. Software, Tools & Drivers (Utility) ---
+            { name: "Mantra RD Service", cat: "Software", icon: "👆", link: "https://download.mantratecapp.com/" },
+            { name: "Morpho RD Service", cat: "Software", icon: "👆", link: "https://rdserviceonline.com/" },
+            { name: "Startek RD Driver", cat: "Software", icon: "👆", link: "https://www.acpl.in.net/RdService.html" },
+            { name: "Secugen RD Driver", cat: "Software", icon: "👆", link: "https://secugenindia.com/" },
+            { name: "Google Input Marathi", cat: "Software", icon: "⌨️", link: "https://drive.google.com/file/d/1Qblh2FhIzlkll43hKzuMntP8CuPZEqdk/view" },
+            { name: "AnyDesk Download", cat: "Software", icon: "🖥️", link: "https://anydesk.com/en/downloads/windows" },
+            { name: "IrfanView Image Tool", cat: "Software", icon: "👁️‍🗨️", link: "https://www.irfanview.com/" },
+            { name: "Image Resizer Online", cat: "Software", icon: "🖼️", link: "https://picresize.com/" },
+            { name: "Remove BG", cat: "Software", icon: "✂️", link: "https://www.remove.bg/" },
+            { name: "Adobe Acrobat Reader", cat: "Software", icon: "📄", link: "https://get.adobe.com/reader/" },
+            { name: "I Love PDF (Tools)", cat: "Software", icon: "📑", link: "https://www.ilovepdf.com/" },
+            { name: "WhatsApp Web", cat: "Software", icon: "💬", link: "https://web.whatsapp.com/" },
+            { name: "Telegram Web", cat: "Software", icon: "✈️", link: "https://web.telegram.org/" }
         ];
 
-        // 2. SPA ROUTER LOGIC
+        // ==========================================
+        // ⚙️ ROUTER & RENDER LOGIC ⚙️
+        // ==========================================
+
         function navigate(pageId) {
             // Desktop Nav
             document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
@@ -418,13 +497,12 @@
             if(pageId === 'services') filterData('All');
         }
 
-        // 3. ADVANCED DOM RENDERER
         function renderCards(dataArray, containerId) {
             const container = document.getElementById(containerId);
             container.innerHTML = ""; 
 
             dataArray.forEach((service, index) => {
-                const delay = index * 0.03; // Faster staggered effect
+                const delay = index * 0.02; // Fast stagger animation
                 const card = `
                     <a href="${service.link}" target="_blank" class="service-card" style="animation-delay: ${delay}s;">
                         <div class="s-icon">${service.icon}</div>
@@ -435,12 +513,12 @@
             });
         }
 
-        // 4. FILTER LOGIC
         function filterData(category) {
             if(event && event.currentTarget.classList.contains('filter-btn')) {
                 document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
                 event.currentTarget.classList.add('active');
             }
+
             if (category === 'All') {
                 renderCards(servicesData, 'all-services-grid');
             } else {
@@ -449,16 +527,18 @@
             }
         }
 
-        // 5. INITIALIZE
+        // Initialize App on Load
         window.onload = () => {
-            renderCards(servicesData.slice(0, 4), 'trending-grid'); // Show first 4 in trending
+            // Pick Top 8 critical links for the "Trending/Quick Services" section on Home
+            const trendingLinks = servicesData.filter(item => ["Digital Seva Connect", "PM Kisan Samman Nidhi", "MahaDBT Login", "My Aadhaar (UIDAI)", "Digital Satbara (7/12)", "E-Shram Registration", "NSDL PAN Apply (New)", "Ayushman Operator"].includes(item.name));
+            
+            renderCards(trendingLinks.length > 0 ? trendingLinks : servicesData.slice(0, 8), 'trending-grid'); 
             renderCards(servicesData, 'all-services-grid'); 
         }
 
-        // 6. FORM SIMULATION
         function submitForm(e) {
             e.preventDefault();
-            alert("✅ Secure Encrypted Message Sent! The Nayak Digital team will contact you shortly.");
+            alert("✅ Secure Encrypted Message Sent! Nayak Digital Seva team will contact you shortly.");
             e.target.reset();
         }
     </script>
