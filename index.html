@@ -1,4 +1,4 @@
-=<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -42,16 +42,13 @@
         @keyframes popInStagger { from { opacity: 0; transform: scale(0.8) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
         @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
-        /* --- CLOUD ADVERTISEMENT ANIMATIONS --- */
-        @keyframes adFloat { 0% { transform: translateY(0px) rotate(0deg); box-shadow: 0 10px 25px rgba(255, 153, 51, 0.2); } 50% { transform: translateY(-15px) rotate(1deg); box-shadow: 0 25px 40px rgba(255, 153, 51, 0.4); } 100% { transform: translateY(0px) rotate(0deg); box-shadow: 0 10px 25px rgba(255, 153, 51, 0.2); } }
-        @keyframes adGlare { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
-
         /* --- TOP RIBBON & ADMIN LINK --- */
         .top-ribbon { background: var(--govt-blue); color: var(--white); font-size: 12px; padding: 8px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.2); font-weight: 600; letter-spacing: 1px; }
         .admin-link { color: var(--saffron); text-decoration: none; display: flex; align-items: center; gap: 5px; transition: 0.3s; padding: 2px 8px; border-radius: 4px; border: 1px solid transparent; }
         .admin-link:hover { color: var(--white); border-color: var(--saffron); background: rgba(255, 153, 51, 0.2); }
         .ribbon-right { display: flex; gap: 15px; align-items: center; }
 
+        /* --- TICKER --- */
         .ticker-wrap { background: var(--govt-blue-light); color: white; padding: 8px 0; overflow: hidden; display: flex; border-bottom: 3px solid var(--saffron); }
         .ticker-title { background: var(--saffron); color: var(--govt-blue); padding: 0 15px; font-weight: 800; font-size: 12px; z-index: 10; display: flex; align-items: center; white-space: nowrap; box-shadow: 5px 0 10px rgba(0,0,0,0.2); }
         .ticker-move { display: inline-block; white-space: nowrap; padding-left: 100%; animation: ticker 25s linear infinite; font-size: 13px; font-weight: 600; }
@@ -83,12 +80,12 @@
         .hero-btn { background: var(--saffron); color: white; border: none; padding: 15px 35px; font-size: 16px; font-weight: 800; border-radius: 30px; cursor: pointer; transition: 0.3s; animation: pulseBorder 2s infinite; }
         .hero-btn:hover { transform: translateY(-5px) scale(1.05); background: #e68a00; }
 
-        /* --- DYNAMIC CLOUD ADVERTISEMENT SECTION --- */
-        #ad-section { margin: 40px auto 0 auto; max-width: 800px; border-radius: 20px; overflow: hidden; border: 4px solid var(--saffron); display: none; position: relative; animation: adFloat 5s ease-in-out infinite; cursor: pointer; }
-        #ad-section img { width: 100%; max-height: 350px; object-fit: cover; display: block; transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        #ad-section::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 100%); transform: skewX(-25deg); animation: adGlare 4s infinite; pointer-events: none; z-index: 10;}
-        #ad-section:hover img { transform: scale(1.05); }
-        #ad-section:hover { border-color: var(--green); }
+        /* --- MULTI-AD CAROUSEL (NO CROP) --- */
+        .carousel-container { margin: 40px auto 0 auto; max-width: 800px; border-radius: 20px; overflow: hidden; border: 4px solid var(--saffron); box-shadow: 0 15px 35px rgba(0,0,0,0.15); display: none; position: relative; background: #0A1931; }
+        .carousel-slide { display: none; width: 100%; animation: fadeEffect 1.5s; text-align: center; }
+        .carousel-slide.active { display: block; }
+        .carousel-slide img { width: 100%; height: auto; max-height: 400px; object-fit: contain; display: block; margin: 0 auto; }
+        @keyframes fadeEffect { from {opacity: 0.3} to {opacity: 1} }
 
         /* --- LEADERSHIP SECTION --- */
         .leadership-sec { margin: 60px 0; text-align: center; }
@@ -169,7 +166,7 @@
             .hero-banner { padding: 40px 20px; border-radius: 16px; }
             .hero-banner h2 { font-size: 28px; }
             .hero-banner p { font-size: 14px; }
-            #ad-section { margin: 30px 10px 0 10px; }
+            .carousel-container { margin: 30px 10px 0 10px; }
             .leader-card { width: 100%; max-width: 350px; padding: 30px 20px; }
             .filter-bar { padding-bottom: 10px; margin-bottom: 20px; }
             .filter-btn { padding: 8px 16px; font-size: 12px; }
@@ -179,7 +176,7 @@
             .s-name { font-size: 11px; }
             .contact-container { grid-template-columns: 1fr; padding: 25px; border-radius: 16px; gap: 30px; }
             .contact-info h3 { font-size: 24px; }
-            .ribbon-right span.hide-mob { display: none; } /* Hide extra text on mobile ribbon */
+            .ribbon-right span.hide-mob { display: none; } 
             footer { padding-bottom: 90px; } 
             footer h3 { font-size: 20px; }
             .dev-name { font-size: 18px; }
@@ -248,9 +245,8 @@
                 <button class="hero-btn" onclick="navigate('services')">Explore All Services ➔</button>
             </div>
 
-            <div id="ad-section">
-                <img id="live-ad-image" src="" alt="Today's Offer">
-            </div>
+            <div id="ad-carousel" class="carousel-container">
+                </div>
 
             <div class="leadership-sec">
                 <h2 class="section-title">Leadership & Visionary</h2>
@@ -259,7 +255,7 @@
                         <div class="leader-img-wrapper">
                             <div class="img-ring"></div>
                             <div class="img-ring-2"></div>
-                            <img src="surajbhau.png" alt="Founder" class="leader-img">
+                            <img src="./surajbhau.png" alt="Founder" class="leader-img">
                         </div>
                         <h3>Suraj Gulab Rathod</h3>
                         <div class="leader-role">Founder</div>
@@ -293,13 +289,13 @@
             <h2 style="color: var(--govt-blue); margin-bottom: 40px; font-size: 32px; font-weight: 800; text-align: center;">Our Kendra Gallery</h2>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
                 <div style="border-radius: 20px; overflow: hidden; box-shadow: var(--shadow); position: relative; cursor: pointer; aspect-ratio: 4/3;">
-                    <img src="1.jpeg" alt="Center" style="width: 100%; height: 100%; object-fit: cover; transition: 0.5s;">
+                    <img src="./1.jpeg" alt="Center" style="width: 100%; height: 100%; object-fit: cover; transition: 0.5s;">
                 </div>
                 <div style="border-radius: 20px; overflow: hidden; box-shadow: var(--shadow); position: relative; cursor: pointer; aspect-ratio: 4/3;">
-                    <img src="2.jpeg" alt="Customers" style="width: 100%; height: 100%; object-fit: cover; transition: 0.5s;">
+                    <img src="./2.jpeg" alt="Customers" style="width: 100%; height: 100%; object-fit: cover; transition: 0.5s;">
                 </div>
                 <div style="border-radius: 20px; overflow: hidden; box-shadow: var(--shadow); position: relative; cursor: pointer; aspect-ratio: 4/3;">
-                    <img src="3.jpeg" alt="Biometrics" style="width: 100%; height: 100%; object-fit: cover; transition: 0.5s;">
+                    <img src="./3.jpeg" alt="Biometrics" style="width: 100%; height: 100%; object-fit: cover; transition: 0.5s;">
                 </div>
             </div>
         </div>
@@ -337,7 +333,7 @@
         <p style="font-size: 14px; opacity: 0.8; max-width: 600px; margin: 0 auto 10px auto;">Authorized provider of CSC, MahaOnline, Aadhaar, and Pan services under the Digital India Initiative.</p>
         
         <div style="margin-top: 15px;">
-            <a href="admin.html" target="_blank" style="color: var(--saffron); text-decoration: none; font-size: 12px; font-weight: bold; border: 1px dashed var(--saffron); padding: 5px 10px; border-radius: 5px;">⚙️ Admin Login</a>
+            <a href="admin.html" target="_blank" style="color: var(--saffron); text-decoration: none; font-size: 12px; font-weight: bold; border: 1px dashed var(--saffron); padding: 5px 10px; border-radius: 5px;">⚙️ Admin Dashboard</a>
         </div>
 
         <div class="dev-credit-box">
@@ -347,27 +343,58 @@
     </footer>
 
     <script>
-        // ==========================================
-        // ☁️ FIREBASE REAL-TIME CLOUD SYNC LOGIC ☁️
-        // ==========================================
+        // ------------------------------------------
+        // 1. FIREBASE REAL-TIME CLOUD SYNC LOGIC
+        // ------------------------------------------
         const firebaseConfig = {
-            // Demo URL - Paste your Firebase link here later
-            databaseURL: "https://nayakdigi-4be38-default-rtdb.firebaseio.com" 
+            // ⚠️ YOUR FIREBASE DB URL HERE
+            databaseURL: "https://nayak-digital-default-rtdb.firebaseio.com/" 
         };
         
         if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
         const db = firebase.database();
 
-        // Listen for Ad Banner Changes
-        db.ref('liveData/advertisement').on('value', (snapshot) => {
-            const imageUrl = snapshot.val();
-            if(imageUrl) {
-                document.getElementById('ad-section').style.display = 'block';
-                document.getElementById('live-ad-image').src = imageUrl;
+        let slideInterval; // Variable to control the auto-slider
+
+        // Real-Time Ad Carousel Sync
+        db.ref('liveData/ads').on('value', (snapshot) => {
+            const adsArray = snapshot.val() || [];
+            const container = document.getElementById('ad-carousel');
+            
+            if(adsArray.length > 0) {
+                container.style.display = 'block';
+                let htmlContent = "";
+                
+                // Build HTML for each ad slide
+                adsArray.forEach((adUrl, index) => {
+                    htmlContent += `<div class="carousel-slide ${index === 0 ? 'active' : ''}">
+                                        <img src="${adUrl}" alt="Live Offer">
+                                    </div>`;
+                });
+                container.innerHTML = htmlContent;
+
+                // Auto-Slider Logic (Changes image every 4 seconds)
+                clearInterval(slideInterval); 
+                if(adsArray.length > 1) {
+                    let slideIndex = 0;
+                    slideInterval = setInterval(() => {
+                        let slides = document.getElementsByClassName("carousel-slide");
+                        if(slides.length === 0) return;
+                        
+                        for (let i = 0; i < slides.length; i++) {
+                            slides[i].classList.remove("active");  
+                        }
+                        slideIndex++;
+                        if (slideIndex >= slides.length) { slideIndex = 0; }    
+                        slides[slideIndex].classList.add("active");
+                    }, 4000); 
+                }
+            } else {
+                container.style.display = 'none'; // Hide if array is empty
             }
         });
 
-        // Listen for Ticker Alert Changes
+        // Real-Time Ticker Sync
         db.ref('liveData/tickerAlert').on('value', (snapshot) => {
             const alertText = snapshot.val();
             if(alertText) {
@@ -375,12 +402,11 @@
             }
         });
 
-
-        // ==========================================
-        // 📦 THE MASSIVE 150+ LINKS DATABASE 📦
-        // ==========================================
+        // ------------------------------------------
+        // 2. THE 150+ SERVICES DATABASE ARRAY
+        // ------------------------------------------
         const servicesData = [
-            // --- 1. CSC & MahaOnline (Core Services) ---
+            // --- CSC & MahaOnline ---
             { name: "Digital Seva Connect", cat: "CSC", icon: "💻", link: "https://digitalseva.csc.gov.in" },
             { name: "CSC Login (VLE)", cat: "CSC", icon: "🔑", link: "https://register.csc.gov.in/" },
             { name: "CSC Locator", cat: "CSC", icon: "📍", link: "https://locator.csccloud.in/" },
@@ -394,7 +420,7 @@
             { name: "UMANG Web Portal", cat: "CSC", icon: "📱", link: "https://web.umang.gov.in/" },
             { name: "CSC Helpdesk / Ticket", cat: "CSC", icon: "🎧", link: "https://digitalseva.csc.gov.in" },
 
-            // --- 2. Aadhaar, PAN & Taxation ---
+            // --- Aadhaar, PAN & Taxation ---
             { name: "My Aadhaar (UIDAI)", cat: "Aadhaar", icon: "👁️", link: "https://myaadhaar.uidai.gov.in/" },
             { name: "Download e-Aadhaar", cat: "Aadhaar", icon: "📥", link: "https://myaadhaar.uidai.gov.in/genricDownloadAadhaar" },
             { name: "Aadhaar Update Status", cat: "Aadhaar", icon: "🔄", link: "https://myaadhaar.uidai.gov.in/CheckAadhaarStatus" },
@@ -403,17 +429,17 @@
             { name: "NSDL PAN Apply (New)", cat: "Aadhaar", icon: "💳", link: "https://onlineservices.proteantech.in/paam/endUserRegisterContact.html" },
             { name: "NSDL PAN Download", cat: "Aadhaar", icon: "📥", link: "https://www.onlineservices.nsdl.com/paam/requestAndDownloadEPAN.html" },
             { name: "UTIITSL PAN Apply", cat: "Aadhaar", icon: "💳", link: "https://www.pan.utiitsl.com/" },
-            { name: "Income Tax Instant e-PAN", cat: "Aadhaar", icon: "🏦", link: "https://eportal.incometax.gov.in/iec/foservices/#/pre-login/instant-e-pan" },
+            { name: "Income Tax Instant PAN", cat: "Aadhaar", icon: "🏦", link: "https://eportal.incometax.gov.in/iec/foservices/#/pre-login/instant-e-pan" },
             { name: "Aadhaar-PAN Link Status", cat: "Aadhaar", icon: "🔗", link: "https://eportal.incometax.gov.in/iec/foservices/#/pre-login/link-aadhaar-status" },
             { name: "Income Tax e-Filing", cat: "Aadhaar", icon: "📈", link: "https://eportal.incometax.gov.in/" },
             { name: "GST Registration", cat: "Aadhaar", icon: "📊", link: "https://www.gst.gov.in/" },
-            { name: "MSME Udyam Registration", cat: "Aadhaar", icon: "🏭", link: "https://udyamregistration.gov.in/" },
+            { name: "MSME Udyam Reg.", cat: "Aadhaar", icon: "🏭", link: "https://udyamregistration.gov.in/" },
 
-            // --- 3. MahaDBT & State Government Schemes ---
+            // --- MahaDBT & State Government Schemes ---
             { name: "MahaDBT Login", cat: "MahaDBT", icon: "👤", link: "https://mahadbt.maharashtra.gov.in/" },
             { name: "Digital Satbara (7/12)", cat: "MahaDBT", icon: "📜", link: "https://digitalsatbara.mahabhumi.gov.in/dslr" },
-            { name: "Mahabhulekh (Land Records)", cat: "MahaDBT", icon: "🗺️", link: "https://bhulekh.mahabhumi.gov.in/" },
-            { name: "BhuNakasha Maharashtra", cat: "MahaDBT", icon: "📍", link: "https://mahabhunakasha.mahabhumi.gov.in/" },
+            { name: "Mahabhulekh (Land)", cat: "MahaDBT", icon: "🗺️", link: "https://bhulekh.mahabhumi.gov.in/" },
+            { name: "BhuNakasha Maha", cat: "MahaDBT", icon: "📍", link: "https://mahabhunakasha.mahabhumi.gov.in/" },
             { name: "E-Hakk (Ferfar 7/12)", cat: "MahaDBT", icon: "📝", link: "https://pdeigr.maharashtra.gov.in/" },
             { name: "Mahafood RC (Ration)", cat: "MahaDBT", icon: "🍚", link: "https://rcms.mahafood.gov.in/Show_Reports.aspx?RID=116" },
             { name: "Ration Card Apply", cat: "MahaDBT", icon: "📋", link: "https://rcms.mahafood.gov.in/" },
@@ -421,14 +447,14 @@
             { name: "E-Shram Registration", cat: "MahaDBT", icon: "👷‍♂️", link: "https://eshram.gov.in/" },
             { name: "Mahadiscom Light Bill", cat: "MahaDBT", icon: "⚡", link: "https://wss.mahadiscom.in/wss/wss" },
             { name: "New Meter Connection", cat: "MahaDBT", icon: "🔌", link: "https://wss.mahadiscom.in/wss/wss_new_connection_request.aspx" },
-            { name: "Police Clearance (PCS)", cat: "MahaDBT", icon: "👮", link: "https://pcs.mahaonline.gov.in/" },
+            { name: "Police Clearance PCS", cat: "MahaDBT", icon: "👮", link: "https://pcs.mahaonline.gov.in/" },
             { name: "CCTNS Maharashtra", cat: "MahaDBT", icon: "🚓", link: "https://citizen.mahapolice.gov.in/" },
             { name: "Cast Validity (BARTI)", cat: "MahaDBT", icon: "📜", link: "https://barti.maharashtra.gov.in/" },
             { name: "Voter ID Portal (NVSP)", cat: "MahaDBT", icon: "🗳️", link: "https://voters.eci.gov.in/" },
-            { name: "Parivahan (Driving Licence)", cat: "MahaDBT", icon: "🪪", link: "https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do" },
+            { name: "Parivahan (Driving)", cat: "MahaDBT", icon: "🪪", link: "https://sarathi.parivahan.gov.in/sarathiservice/stateSelection.do" },
             { name: "Vahan (Vehicle RC)", cat: "MahaDBT", icon: "🚘", link: "https://vahan.parivahan.gov.in/vahanservice/" },
 
-            // --- 4. Agriculture & Farmers ---
+            // --- Agriculture & Farmers ---
             { name: "PM Kisan Samman Nidhi", cat: "Agri", icon: "🚜", link: "https://pmkisan.gov.in" },
             { name: "PM Kisan Status Check", cat: "Agri", icon: "🔍", link: "https://pmkisan.gov.in/BeneficiaryStatus_New.aspx" },
             { name: "PMFBY (Fasal Bima)", cat: "Agri", icon: "🌱", link: "https://pmfby.gov.in/" },
@@ -437,7 +463,7 @@
             { name: "Pik Vima Yojana Apply", cat: "Agri", icon: "📝", link: "https://pmfby.gov.in/" },
             { name: "Agriculture Dept Maha", cat: "Agri", icon: "🌻", link: "https://krishi.maharashtra.gov.in/" },
 
-            // --- 5. Banking, Finance & Insurance ---
+            // --- Banking, Finance & Insurance ---
             { name: "CSC Loan Bazaar", cat: "Finance", icon: "💰", link: "https://digitalseva.csc.gov.in" },
             { name: "HDFC Account Opening", cat: "Finance", icon: "🏦", link: "https://digitalseva.csc.gov.in" },
             { name: "SBI e-Mudra Loan", cat: "Finance", icon: "💳", link: "https://emudra.sbi.co.in:8044/emudra" },
@@ -445,7 +471,7 @@
             { name: "PM Vishwakarma Yojna", cat: "Finance", icon: "🛠️", link: "https://pmvishwakarma.gov.in/" },
             { name: "LIC Premium Payment", cat: "Finance", icon: "🛡️", link: "https://ebiz.licindia.in/" },
 
-            // --- 6. Education, Health & Jobs ---
+            // --- Education, Health & Jobs ---
             { name: "National Scholarship", cat: "EduHealth", icon: "🇮🇳", link: "https://scholarships.gov.in/" },
             { name: "MahaDBT Post Matric", cat: "EduHealth", icon: "🎓", link: "https://mahadbt.maharashtra.gov.in/" },
             { name: "RTE Admission Portal", cat: "EduHealth", icon: "🏫", link: "https://student.maharashtra.gov.in/adm_portal/Users/rte_index_new" },
@@ -454,9 +480,9 @@
             { name: "Ayushman Operator", cat: "EduHealth", icon: "🏥", link: "https://beneficiary.nha.gov.in" },
             { name: "ABHA Health ID Card", cat: "EduHealth", icon: "❤️", link: "https://abha.abdm.gov.in/abha/v3/" },
             { name: "Majhi Naukri (Jobs)", cat: "EduHealth", icon: "💼", link: "https://www.majhinaukri.in/" },
-            { name: "NMK (NMK.co.in)", cat: "EduHealth", icon: "📰", link: "https://www.nmk.co.in/" },
+            { name: "NMK Updates", cat: "EduHealth", icon: "📰", link: "https://www.nmk.co.in/" },
 
-            // --- 7. Software, Tools & Drivers (Utility) ---
+            // --- Software, Tools & Drivers ---
             { name: "Mantra RD Service", cat: "Software", icon: "👆", link: "https://download.mantratecapp.com/" },
             { name: "Morpho RD Service", cat: "Software", icon: "👆", link: "https://rdserviceonline.com/" },
             { name: "Startek RD Driver", cat: "Software", icon: "👆", link: "https://www.acpl.in.net/RdService.html" },
@@ -472,28 +498,29 @@
             { name: "Telegram Web", cat: "Software", icon: "✈️", link: "https://web.telegram.org/" }
         ];
 
-        // ==========================================
-        // ⚙️ ROUTER & RENDER LOGIC ⚙️
-        // ==========================================
-
+        // ------------------------------------------
+        // 3. ROUTER & RENDER LOGIC
+        // ------------------------------------------
         function navigate(pageId) {
-            // Desktop Nav
+            // Update Desktop Nav UI
             document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
             if(document.querySelector(`.nav-btn[onclick="navigate('${pageId}')"]`)) {
                 document.querySelector(`.nav-btn[onclick="navigate('${pageId}')"]`).classList.add('active');
             }
             
-            // Mobile Nav
+            // Update Mobile Bottom Nav UI
             document.querySelectorAll('.m-nav-item').forEach(btn => btn.classList.remove('active'));
             if(document.getElementById(`m-nav-${pageId}`)) {
                 document.getElementById(`m-nav-${pageId}`).classList.add('active');
             }
 
-            // Page Switch
+            // Switch the Page Content
             document.querySelectorAll('.page-view').forEach(page => page.classList.remove('active'));
             document.getElementById(`view-${pageId}`).classList.add('active');
             
             window.scrollTo(0, 0); 
+            
+            // Re-trigger animation if opening services tab
             if(pageId === 'services') filterData('All');
         }
 
@@ -502,7 +529,7 @@
             container.innerHTML = ""; 
 
             dataArray.forEach((service, index) => {
-                const delay = index * 0.02; // Fast stagger animation
+                const delay = index * 0.02; // Very fast staggered effect
                 const card = `
                     <a href="${service.link}" target="_blank" class="service-card" style="animation-delay: ${delay}s;">
                         <div class="s-icon">${service.icon}</div>
@@ -527,7 +554,7 @@
             }
         }
 
-        // Initialize App on Load
+        // Initialize App on Page Load
         window.onload = () => {
             // Pick Top 8 critical links for the "Trending/Quick Services" section on Home
             const trendingLinks = servicesData.filter(item => ["Digital Seva Connect", "PM Kisan Samman Nidhi", "MahaDBT Login", "My Aadhaar (UIDAI)", "Digital Satbara (7/12)", "E-Shram Registration", "NSDL PAN Apply (New)", "Ayushman Operator"].includes(item.name));
