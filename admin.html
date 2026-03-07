@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud Admin | Nayak Digital Seva</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0A1931; color: white; margin: 0; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 40px; border-bottom: 2px solid #FF9933; padding-bottom: 20px; }
+        .header h1 { color: #FF9933; margin: 0; }
+        .panel-card { background: #150E56; padding: 30px; border-radius: 15px; margin-bottom: 30px; border: 1px solid #ffffff33; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .form-group { margin-bottom: 20px; }
+        input[type="file"], input[type="text"] { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #444; background: #0A1931; color: white; box-sizing: border-box; }
+        button { background: #FF9933; color: white; border: none; padding: 12px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.3s; width: 100%; }
+        button:hover { background: #e68a00; transform: translateY(-2px); }
+        .preview-img { max-width: 100%; height: 200px; object-fit: cover; border-radius: 10px; margin-top: 15px; display: none; border: 2px dashed #FF9933; }
+        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0A1931; z-index: 1000; display: flex; align-items: center; justify-content: center; }
+        .login-box { background: #150E56; padding: 40px; border-radius: 15px; text-align: center; width: 300px; }
+    </style>
+</head>
+<body>
+
+    <div id="login-overlay">
+        <div class="login-box">
+            <h2 style="color: #FF9933; margin-top: 0;">Admin Login</h2>
+            <input type="password" id="admin-pass" placeholder="Enter Password" style="width: 100%; padding: 10px; margin-bottom: 20px;">
+            <button onclick="checkAdmin()">Unlock Portal</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>☁️ CLOUD ADMIN PANEL</h1>
+            <p>Nayak Digital Seva (Global Sync Enabled)</p>
+        </div>
+
+        <div class="panel-card">
+            <h2 style="color: #138808; margin-top: 0;">🖼️ Upload Live Advertisement</h2>
+            <p style="font-size: 13px; color: #888;">Note: Upload small images (under 1MB) for fast loading across all devices.</p>
+            <div class="form-group">
+                <input type="file" id="ad-upload" accept="image/*" onchange="previewAd(event)">
+                <img id="ad-preview" class="preview-img">
+            </div>
+            <button onclick="uploadToCloud()">🚀 Push Ad to All Devices</button>
+            <p id="upload-status" style="color: #FF9933; text-align: center; display: none; font-weight: bold; margin-top: 10px;">Syncing to Cloud...</p>
+        </div>
+
+        <div class="panel-card" style="border-top-color: #FF9933;">
+            <h2 style="color: #FF9933; margin-top: 0;">📢 Broadcast Ticker Alert</h2>
+            <div class="form-group">
+                <input type="text" id="new-update-text" placeholder="E.g. Police Bharti forms are out now!">
+            </div>
+            <button onclick="pushUpdateToCloud()" style="background: #138808;">📢 Broadcast to All Users</button>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // ⚠️ PASTE YOUR FIREBASE CONFIG HERE LATER
+        // ==========================================
+        const firebaseConfig = {
+            databaseURL: "https://nayakdigi-4be38-default-rtdb.firebaseio.com" // Demo URL
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // Login Logic
+        function checkAdmin() {
+            if(document.getElementById('admin-pass').value === 'admin123') {
+                document.getElementById('login-overlay').style.display = 'none';
+            } else { alert("❌ Wrong Password!"); }
+        }
+
+        // Image Preview & Cloud Upload
+        let base64Image = "";
+        function previewAd(event) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                const img = document.getElementById('ad-preview');
+                img.src = reader.result;
+                img.style.display = 'block';
+                base64Image = reader.result; // Save base64 string
+            }
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+        function uploadToCloud() {
+            if(base64Image === "") return alert("Please select an image first.");
+            document.getElementById('upload-status').style.display = 'block';
+            
+            // Push to Firebase Realtime Database
+            db.ref('liveData/advertisement').set(base64Image)
+            .then(() => {
+                document.getElementById('upload-status').innerText = "✅ Successfully pushed to all devices!";
+                setTimeout(() => document.getElementById('upload-status').style.display = 'none', 3000);
+            })
+            .catch(err => alert("Error: " + err.message));
+        }
+
+        // Ticker Alert Cloud Upload
+        function pushUpdateToCloud() {
+            const text = document.getElementById('new-update-text').value;
+            if(text) {
+                db.ref('liveData/tickerAlert').set(text)
+                .then(() => {
+                    alert("✅ Alert Broadcasted Globally!");
+                    document.getElementById('new-update-text').value = '';
+                });
+            }
+        }
+    </script>
+</body>
+</html>
